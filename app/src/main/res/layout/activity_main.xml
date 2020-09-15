@@ -27,12 +27,12 @@
             android:fontFamily="sans-serif-light"
             android:text="Discharging"
             android:textColor="@color/discharging"
-            android:textSize="42sp"
+            android:textSize="@dimen/_40ssp"
             android:textStyle="bold" />
 
         <pl.droidsonroids.gif.GifImageView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="@dimen/_40sdp"
             android:src="@drawable/process"
             />
 
@@ -58,10 +58,10 @@
                 android:id="@+id/ampLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="@dimen/_2sdp"
                 android:text="Current"
                 android:textColor="@color/textPrimaryLight"
-                android:textSize="16sp" />
+                android:textSize="@dimen/_12ssp" />
 
             <TextView
                 android:id="@+id/ampValue"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:text="0.00 mA"
                 android:textColor="@color/textPrimaryLight"
-                android:textSize="36sp" />
+                android:textSize="@dimen/_28ssp" />
         </LinearLayout>
 
         <LinearLayout
@@ -83,10 +83,10 @@
                 android:id="@+id/voltLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="@dimen/_2sdp"
                 android:text="Voltage"
                 android:textColor="@color/textPrimaryLight"
-                android:textSize="16sp" />
+                android:textSize="@dimen/_12ssp" />
 
             <TextView
                 android:id="@+id/voltValue"
@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:text="0.00 v"
                 android:textColor="@color/textPrimaryLight"
-                android:textSize="36sp" />
+                android:textSize="@dimen/_28ssp" />
         </LinearLayout>
 
 

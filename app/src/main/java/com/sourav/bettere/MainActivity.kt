@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlin.math.log
 
-class MainActivity : AppCompatActivity(), AmpReceived, VoltReceived {
+class MainActivity : AppCompatActivity(), AmpReceived, VoltReceived, ChargingStatus {
     private lateinit var receiver: BatteryBroadcast
     private lateinit var mBatteryManager: BatteryManager
     private lateinit var job: Job
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), AmpReceived, VoltReceived {
 
         receiver = BatteryBroadcast()
 
-        receiver.setAmpReceived(this)
+        receiver.setChargingStatus(this)
         receiver.setVoltReceived(this)
         this.registerReceiver(receiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
     }
@@ -61,5 +61,9 @@ class MainActivity : AppCompatActivity(), AmpReceived, VoltReceived {
         super.onDestroy()
         job.cancel()
         unregisterReceiver(receiver)
+    }
+
+    override fun onChargingStatusChange(status: String) {
+        chargingStatus.text = status
     }
 }

@@ -5,18 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.BatteryManager
 import android.util.Log
-import kotlinx.android.synthetic.main.activity_main.*
 
 class BatteryBroadcast: BroadcastReceiver() {
-    var listenerC : AmpReceived? = null
     var listenerV : VoltReceived? = null
-
-    public fun setAmpReceived(context: Context?){
-        listenerC = context as AmpReceived;
-    }
+    var listenerChargingStatus: ChargingStatus? = null
 
     public fun setVoltReceived(context: Context?) {
         listenerV = context as VoltReceived
+    }
+
+    public fun setChargingStatus(context: Context?){
+        listenerChargingStatus = context as ChargingStatus
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -35,13 +34,20 @@ class BatteryBroadcast: BroadcastReceiver() {
         Log.i("Current", "Battery Info: $string")
 
         if (isPresent!!){
-            val percent =  level?.times(100)?.div(scale!!)
-            var volt:Double? = bundle?.getInt("voltage")?.div(1000.0);
+            val volt:Double? = bundle?.getInt("voltage")?.div(1000.0);
+            val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
             listenerV?.onVoltReceived(volt.toString())
             Log.d("Current", "voltage: $volt")
-            listenerC?.onAmpReceived(mBatteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW).div(1000).toString())
-
+            listenerChargingStatus?.onChargingStatusChange(getChargingStatus(plugged!!))
         }
 
+    }
+
+    private fun getChargingStatus(plugged: Int):String{
+        return when (plugged) {
+            BatteryManager.BATTERY_PLUGGED_AC -> "Charging (AC)"
+            BatteryManager.BATTERY_PLUGGED_USB -> "Charging (USB)"
+            else -> "Discharging"
+        }
     }
 }
