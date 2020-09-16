@@ -31,9 +31,17 @@
             android:textStyle="bold" />
 
         <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/animationCharging"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_40sdp"
-            android:src="@drawable/process" />
+            android:src="@drawable/charging"
+            android:visibility="gone"/>
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/animationDischarging"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40sdp"
+            android:src="@drawable/discharging" />
 
     </LinearLayout>
 

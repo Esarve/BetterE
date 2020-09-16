@@ -9,12 +9,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.sourav.bettere.R
 import com.sourav.bettere.broadcasts.BatteryBroadcast
 import com.sourav.bettere.listeners.AmpReceived
 import com.sourav.bettere.listeners.ChargingStatus
 import com.sourav.bettere.listeners.VoltReceived
+import com.sourav.bettere.utils.Constants
 import kotlinx.android.synthetic.main.default_fragment.*
 import kotlinx.coroutines.*
 
@@ -85,6 +87,13 @@ class FragmentDefault : Fragment(),
     }
 
     override fun onChargingStatusChange(status: String) {
+        if (status.equals(Constants.CHARGING_AC) || status.equals(Constants.CHARGING_USB)){
+            animationDischarging.visibility = View.GONE
+            animationCharging.visibility = View.VISIBLE
+        }else{
+            animationDischarging.visibility = View.VISIBLE
+            animationCharging.visibility = View.GONE
+        }
         chargingStatus.text = status
     }
 
