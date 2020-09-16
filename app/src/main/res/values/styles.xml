@@ -5,5 +5,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/layoutBG</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/AllertaStyle</item>
+    </style>
+
+    <style name="AllertaStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/allerta</item>
     </style>
 </resources>
