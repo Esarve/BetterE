@@ -35,7 +35,7 @@ class FragmentDefault : Fragment(),
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mContext = activity!!.applicationContext
+        mContext = requireActivity().applicationContext
         super.onCreate(savedInstanceState)
     }
 
@@ -73,17 +73,19 @@ class FragmentDefault : Fragment(),
                     .div(1000).toString()
             Log.d("Current", "Current: $current")
             Log.d("Current", "Current Thread ${Thread.currentThread().name}")
-            listener.onAmpReceived(current.substring(1))
+            val value= current.substring(1)
+            ampValue?.text = value.plus(" mAh")
+            //listener.onAmpReceived(current.substring(1))
             delay(3000L)
         }
     }
 
     override fun onAmpReceived(value: String) {
-        ampValue.text = value.plus(" mAh")
+        ampValue!!.text = value.plus(" mAh")
     }
 
     override fun onVoltReceived(value: String) {
-        voltValue.text = value.plus(" V")
+        voltValue!!.text = value.plus(" V")
     }
 
     override fun onChargingStatusChange(status: String) {
@@ -95,6 +97,18 @@ class FragmentDefault : Fragment(),
             animationCharging.visibility = View.GONE
         }
         chargingStatus.text = status
+    }
+
+    override fun onPause() {
+        super.onPause()
+        job.cancel()
+        mContext.unregisterReceiver(receiver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadAmpEngine()
+        loadBroadcastReceiver()
     }
 
     override fun onDestroy() {

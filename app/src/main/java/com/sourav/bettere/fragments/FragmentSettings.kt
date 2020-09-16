@@ -17,7 +17,7 @@ class FragmentSettings : Fragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mContext = activity!!.applicationContext
+        mContext = requireActivity().applicationContext
         super.onCreate(savedInstanceState)
     }
 

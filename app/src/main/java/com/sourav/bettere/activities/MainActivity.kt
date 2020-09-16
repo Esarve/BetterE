@@ -7,6 +7,9 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.sourav.bettere.R
 import com.sourav.bettere.broadcasts.BatteryBroadcast
 import com.sourav.bettere.fragments.FragmentDefault
@@ -21,13 +24,33 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initView()
-        loadFragment()
-    }
+        val adapter = ViewPagerAdapter(supportFragmentManager)
+        adapter.addFragment(FragmentDefault.newInstance())
+        adapter.addFragment(FragmentGraph.newInstance())
+        adapter.addFragment(FragmentSettings.newInstance())
+        viewPager.adapter = adapter
 
-    private fun loadFragment() {
-        val fragMan = supportFragmentManager
-        fragMan.beginTransaction().add(R.id.fragment,frag,"Default").commit()
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                when(position){
+                    0 -> setBottomBarColor(defaultFrag)
+                    1 -> setBottomBarColor(graphFrag)
+                    2 -> setBottomBarColor(settingsFrag)
+                }
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+        })
+        initView()
     }
 
     private fun initView() {
@@ -38,20 +61,19 @@ class MainActivity : AppCompatActivity(){
     fun switchFragments(view: View) {
         when (view.id){
             R.id.defaultFrag -> {
-                frag = FragmentDefault.newInstance()
+                viewPager.currentItem = 0
                 setBottomBarColor(defaultFrag)
             }
             R.id.graphFrag -> {
-                frag = FragmentGraph.newInstance()
+                viewPager.currentItem = 1
                 setBottomBarColor(graphFrag)
             }
             R.id.settingsFrag -> {
-                frag = FragmentSettings.newInstance()
+                viewPager.currentItem = 2
                 setBottomBarColor(settingsFrag)
             }
             else -> FragmentDefault.newInstance()
         }
-        loadFragment()
     }
 
     private fun setBottomBarColor(imageView: ImageView) {
@@ -61,5 +83,21 @@ class MainActivity : AppCompatActivity(){
         imageView.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent))
     }
 
+    class ViewPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        private val fragmentlist: MutableList<Fragment> = ArrayList()
 
+        override fun getCount(): Int {
+            return fragmentlist.size
+        }
+
+        override fun getItem(position: Int): Fragment {
+            return fragmentlist[position]
+        }
+
+        fun addFragment(fragment: Fragment){
+            fragmentlist.add(fragment)
+        }
+
+
+    }
 }

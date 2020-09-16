@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_height="@dimen/_48sdp"
         android:background="@drawable/layout_bg_head"
         android:gravity="center"
         android:orientation="vertical"
