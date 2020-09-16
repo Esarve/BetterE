@@ -1,20 +1,22 @@
-package com.sourav.bettere
+package com.sourav.bettere.broadcasts
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.BatteryManager
 import android.util.Log
+import com.sourav.bettere.listeners.ChargingStatus
+import com.sourav.bettere.listeners.VoltReceived
 
 class BatteryBroadcast: BroadcastReceiver() {
     var listenerV : VoltReceived? = null
     var listenerChargingStatus: ChargingStatus? = null
 
-    public fun setVoltReceived(context: Context?) {
+    public fun setVoltReceived(context: VoltReceived?) {
         listenerV = context as VoltReceived
     }
 
-    public fun setChargingStatus(context: Context?){
+    public fun setChargingStatus(context: ChargingStatus?){
         listenerChargingStatus = context as ChargingStatus
     }
 

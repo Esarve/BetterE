@@ -2,9 +2,10 @@
 <resources>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorAccent">@color/textBlue</color>
     <color name="textPrimaryLight">#ffffff</color>
     <color name="charging">#388e3c</color>
-    <color name="discharging">#039be5</color>
+    <color name="textBlue">#039be5</color>
     <color name="layoutBG">#484848</color>
+    <color name="layoutMainBG">#212121</color>
 </resources>
