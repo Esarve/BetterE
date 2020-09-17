@@ -18,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/loggerTrigger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Turn on Charging Monitor"

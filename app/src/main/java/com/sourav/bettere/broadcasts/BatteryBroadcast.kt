@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.BatteryManager
 import android.util.Log
 import com.sourav.bettere.listeners.ChargingStatus
+import com.sourav.bettere.listeners.OnChargingListener
 import com.sourav.bettere.listeners.VoltReceived
 import com.sourav.bettere.utils.Constants
 
@@ -13,6 +14,7 @@ class BatteryBroadcast: BroadcastReceiver() {
 
     var listenerV : VoltReceived? = null
     var listenerChargingStatus: ChargingStatus? = null
+    var listenerOnCharging: OnChargingListener? = null
 
     fun setVoltReceived(context: VoltReceived?) {
         listenerV = context as VoltReceived
@@ -20,6 +22,10 @@ class BatteryBroadcast: BroadcastReceiver() {
 
     fun setChargingStatus(context: ChargingStatus?){
         listenerChargingStatus = context as ChargingStatus
+    }
+
+    fun setOnChargingListener(context: OnChargingListener?){
+        listenerOnCharging = context as OnChargingListener
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
