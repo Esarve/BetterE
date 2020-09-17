@@ -10,6 +10,7 @@ import com.sourav.bettere.listeners.VoltReceived
 import com.sourav.bettere.utils.Constants
 
 class BatteryBroadcast: BroadcastReceiver() {
+
     var listenerV : VoltReceived? = null
     var listenerChargingStatus: ChargingStatus? = null
 
@@ -22,20 +23,20 @@ class BatteryBroadcast: BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("Current", "Broadcast RUN")
+        Log.d(Constants.BROADCAST, "Broadcast RUN")
 
         val isPresent = intent?.getBooleanExtra("present", false)
 
         val bundle = intent?.extras
 
         val string = bundle.toString()
-        Log.i("Current", "Battery Info: $string")
+        Log.d(Constants.BROADCAST, "Battery Info: $string")
 
         if (isPresent!!){
             val volt:Double? = bundle?.getInt("voltage")?.div(1000.0);
             val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
-            listenerV?.onVoltReceived(volt.toString())
-            Log.d("Current", "voltage: $volt")
+            listenerV!!.onVoltReceived(volt.toString())
+            Log.d(Constants.BROADCAST, "voltage: $volt")
             listenerChargingStatus?.onChargingStatusChange(getChargingStatus(plugged!!))
         }
 
