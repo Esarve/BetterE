@@ -43,7 +43,7 @@ class BatteryBroadcast: BroadcastReceiver() {
             val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
             listenerV!!.onVoltReceived(volt.toString())
             Log.d(Constants.BROADCAST, "voltage: $volt")
-            listenerChargingStatus?.onChargingStatusChange(getChargingStatus(plugged!!))
+            listenerChargingStatus!!.onChargingStatusChange(getChargingStatus(plugged!!))
         }
 
     }
