@@ -5,27 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.BatteryManager
 import android.util.Log
-import com.sourav.bettere.listeners.ChargingStatus
-import com.sourav.bettere.listeners.OnChargingListener
-import com.sourav.bettere.listeners.VoltReceived
+import com.sourav.bettere.listeners.ChargingEventListener
 import com.sourav.bettere.utils.Constants
 
 class BatteryBroadcast: BroadcastReceiver() {
 
-    var listenerV : VoltReceived? = null
-    var listenerChargingStatus: ChargingStatus? = null
-    var listenerOnCharging: OnChargingListener? = null
-
-    fun setVoltReceived(context: VoltReceived?) {
-        listenerV = context as VoltReceived
-    }
-
-    fun setChargingStatus(context: ChargingStatus?){
-        listenerChargingStatus = context as ChargingStatus
-    }
-
-    fun setOnChargingListener(context: OnChargingListener?){
-        listenerOnCharging = context as OnChargingListener
+    var listener: ChargingEventListener? = null
+    fun setChargingEventListener(context: ChargingEventListener) {
+        listener = context as ChargingEventListener
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -38,12 +25,14 @@ class BatteryBroadcast: BroadcastReceiver() {
         val string = bundle.toString()
         Log.d(Constants.BROADCAST, "Battery Info: $string")
 
-        if (isPresent!!){
-            val volt:Double? = bundle?.getInt("voltage")?.div(1000.0);
+        if (isPresent!!) {
+            val volt: Double? = bundle?.getInt("voltage")?.div(1000.0);
+            val level: Int? = bundle?.getInt("level")
             val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
-            listenerV!!.onVoltReceived(volt.toString())
+            listener!!.onVoltageChange(volt.toString())
+            listener!!.onBatteryPercentageChange(level.toString().plus("%"))
             Log.d(Constants.BROADCAST, "voltage: $volt")
-            listenerChargingStatus!!.onChargingStatusChange(getChargingStatus(plugged!!))
+            listener!!.onChargingStatusChange((getChargingStatus(plugged!!)))
         }
 
     }

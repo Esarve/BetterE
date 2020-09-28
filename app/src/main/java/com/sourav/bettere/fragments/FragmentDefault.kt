@@ -12,17 +12,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.sourav.bettere.R
 import com.sourav.bettere.broadcasts.BatteryBroadcast
-import com.sourav.bettere.listeners.AmpReceived
-import com.sourav.bettere.listeners.ChargingStatus
-import com.sourav.bettere.listeners.VoltReceived
+import com.sourav.bettere.listeners.ChargingEventListener
 import com.sourav.bettere.utils.Constants
 import kotlinx.android.synthetic.main.default_fragment.*
 import kotlinx.coroutines.*
 
-class FragmentDefault : Fragment(),
-    AmpReceived,
-    VoltReceived,
-    ChargingStatus {
+class FragmentDefault : Fragment(), ChargingEventListener {
     private lateinit var mContext: Context
     private lateinit var receiver: BatteryBroadcast
     private lateinit var jobC: Job
@@ -54,8 +49,7 @@ class FragmentDefault : Fragment(),
     private fun loadBroadcastReceiver() {
         Log.d(Constants.DEFAULT, "Current Thread ${Thread.currentThread().name}")
         receiver = BatteryBroadcast()
-        receiver.setChargingStatus(this@FragmentDefault)
-        receiver.setVoltReceived(this@FragmentDefault)
+        receiver.setChargingEventListener(this@FragmentDefault)
         mContext.registerReceiver(receiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
 
     }
@@ -86,11 +80,7 @@ class FragmentDefault : Fragment(),
         }
     }
 
-    override fun onAmpReceived(value: String) {
-        ampValue!!.text = value.plus(" mAh")
-    }
-
-    override fun onVoltReceived(value: String) {
+    override fun onVoltageChange(value: String) {
         voltValue?.text = value.plus(" V")
     }
 
@@ -105,6 +95,10 @@ class FragmentDefault : Fragment(),
             }
             chargingStatus.text = status
         }
+    }
+
+    override fun onBatteryPercentageChange(value: String) {
+        batteryPercentage.text = value
     }
 
     override fun onPause() {

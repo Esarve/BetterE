@@ -30,6 +30,17 @@
             android:textSize="@dimen/_40ssp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/batteryPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="100%"
+            android:textColor="@color/textPrimaryLight"
+            android:textSize="@dimen/_30ssp"
+            android:textStyle="bold" />
+
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/animationCharging"
             android:layout_width="wrap_content"
