@@ -84,4 +84,9 @@ class ChargeLoggerService : Service(), OnChargingListener {
         }
     }
 
+    override fun onDestroy() {
+        this.unregisterReceiver(receiver)
+        super.onDestroy()
+    }
+
 }

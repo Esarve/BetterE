@@ -67,6 +67,8 @@ class FragmentGraph : Fragment() {
 //                WorkManager.getInstance(mContext).enqueue(request)
                 activity!!.startService(intent)
                 Log.d(Constants.GRAPH, "onCreateView: Switch Listener Fired")
+            } else {
+                activity!!.stopService(intent)
             }
         }
 
