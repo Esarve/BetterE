@@ -29,17 +29,23 @@ class ChargingBroadcast : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d(Constants.SERVICE, "Broadcast RUN")
-
         val isPresent = intent?.getBooleanExtra("present", false)
-
         val bundle = intent?.extras
-
         val string = bundle.toString()
         Log.d(Constants.SERVICE, "Battery Info: $string")
 
         if (isPresent!!) {
             val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
-            getChargingStatus(plugged!!)
+            val volt: Double? = bundle?.getInt("voltage")?.div(1000.0)
+            val level: Int? = bundle?.getInt("level")
+            val temp: Double? = bundle?.getInt("temperature")?.div(10.0)
+
+            try {
+                getChargingStatus(plugged!!)
+                listenerOnCharging!!.onReceive(volt!!, level!!, temp!!)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }

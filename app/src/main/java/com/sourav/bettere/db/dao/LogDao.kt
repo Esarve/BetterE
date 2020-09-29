@@ -1,0 +1,18 @@
+package com.sourav.bettere.db.dao
+
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.sourav.bettere.db.entity.ChargingLog
+
+@Dao
+interface LogDao {
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addLog(obj: ChargingLog)
+
+    @Query("SELECT * FROM charging_log ORDER BY percentage ASC")
+    fun readALlData(): LiveData<List<ChargingLog>>
+}

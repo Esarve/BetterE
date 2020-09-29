@@ -20,6 +20,7 @@ class ChargeLoggerService : Service(), OnChargingListener {
     private lateinit var builder: NotificationCompat.Builder
     private lateinit var manager: NotificationManager
     private lateinit var receiver: ChargingBroadcast
+    private var charging: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
@@ -67,15 +68,27 @@ class ChargeLoggerService : Service(), OnChargingListener {
     }
 
     override fun onCharging() {
+        charging = true
         Log.d(Constants.SERVICE, "ON Charging: Fired")
         builder.setStyle(NotificationCompat.BigTextStyle().bigText("Charging"))
         showNotification(1)
     }
 
     override fun onDischarging() {
+        charging = false
         Log.d(Constants.SERVICE, "On Discharging: Fired")
         builder.setStyle(NotificationCompat.BigTextStyle().bigText("Discharging"))
         showNotification(1)
+    }
+
+    override fun onReceive(voltage: Double, percentage: Int, temp: Double) {
+        if (charging) {
+            builder.setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("Charging: voltage: $voltage, Temp: $temp, Percentage: $percentage")
+            )
+            showNotification(1)
+        }
     }
 
     private fun showNotification(id: Int) {
