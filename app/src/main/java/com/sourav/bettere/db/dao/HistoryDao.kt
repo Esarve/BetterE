@@ -13,6 +13,9 @@ interface HistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addHistory(obj: ChargingHistory)
 
-    @Query("SELECT * FROM charging_history ORDER BY pk ASC")
+    @Query("SELECT * FROM charging_history ORDER BY cycle ASC")
     fun readALlData(): LiveData<List<ChargingHistory>>
+
+    @Query("SELECT cycle FROM charging_history ORDER BY cycle DESC LIMIT 1")
+    suspend fun getLastCycle(): Long
 }

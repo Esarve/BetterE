@@ -10,13 +10,17 @@ class Constants {
         const val DISCHARGING = "Discharging"
 
         //Tags For Logs
-        const val BROADCAST = "Broadcast Receiver"
+        const val BROADCAST = "BroadcastReceiver"
         const val SERVICE = "Service"
-        const val DEFAULT = "Default Fragment"
-        const val GRAPH = "Graph Fragment"
-        const val SETTINGS = "Settings Fragment"
+        const val DEFAULT = "DefaultFragment"
+        const val GRAPH = "GraphFragment"
+        const val SETTINGS = "SettingsFragment"
+        const val DATABASE = "dbresult"
 
+        //FOR notifications
         const val TITLE = "Monitoring Service is Running"
         const val BODY = "BetterE will log charging events as soon as plugged in"
+
+        const val SERVICE_CYCLE = "cycle"
     }
 }

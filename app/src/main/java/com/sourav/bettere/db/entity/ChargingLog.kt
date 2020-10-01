@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 data class ChargingLog(
     @PrimaryKey
     val timestamp: Long,
-    val pk: Int,
+    val cycle: Long,
     val percentage: Int,
-    val current: Double,
+    val current: Long,
     val voltage: Double,
     val temp: Double,
 )

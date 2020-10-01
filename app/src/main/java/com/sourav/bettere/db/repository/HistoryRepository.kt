@@ -8,6 +8,10 @@ class HistoryRepository(private val historyDao: HistoryDao) {
 
     val readAllData: LiveData<List<ChargingHistory>> = historyDao.readALlData()
 
+    suspend fun getLastCycle():Long{
+        return historyDao.getLastCycle()
+    }
+
     suspend fun addHistory(chargingHistory: ChargingHistory) {
         historyDao.addHistory(chargingHistory)
     }

@@ -24,15 +24,18 @@ class FragmentDefault : Fragment(), ChargingEventListener {
     private lateinit var jobB: Job
     private var delayTime = 3000L
     private var isOnForeground: Boolean = true
+    private lateinit var mBatteryManager: BatteryManager
 
     companion object {
         fun newInstance(): FragmentDefault {
             return FragmentDefault()
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mContext = requireActivity().applicationContext
+        mBatteryManager = mContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         super.onCreate(savedInstanceState)
     }
 
@@ -64,12 +67,13 @@ class FragmentDefault : Fragment(), ChargingEventListener {
     }
 
     private suspend fun getCurrent() {
-        val mBatteryManager = mContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+
 
         while (jobC.isActive) {
             val current =
                 mBatteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
-                    .div(1000).toString()
+                    .div(1000)
+                    .toString()
 
             Log.d(Constants.DEFAULT, "Current: $current")
             Log.d(Constants.DEFAULT, "Current Thread ${Thread.currentThread().name}")

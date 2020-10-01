@@ -6,10 +6,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "charging_history")
 data class ChargingHistory(
     @PrimaryKey
-    val pk: Int,
+    val cycle: Long,
     val startTime: Long,
     val endTime: Long,
     val startedFrom: Int,
     val endedAt: Int,
-    val totalCharged: Int
 )

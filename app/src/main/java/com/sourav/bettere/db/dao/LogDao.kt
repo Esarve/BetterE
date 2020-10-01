@@ -14,5 +14,8 @@ interface LogDao {
     suspend fun addLog(obj: ChargingLog)
 
     @Query("SELECT * FROM charging_log ORDER BY percentage ASC")
-    fun readALlData(): LiveData<List<ChargingLog>>
+    fun readALlDataLive(): LiveData<List<ChargingLog>>
+
+    @Query("SELECT * FROM charging_log ORDER BY percentage ASC")
+    fun readALlData(): List<ChargingLog>
 }
