@@ -46,7 +46,7 @@ abstract class ChargingDB : RoomDatabase() {
                 var instance = INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(
-                        context.applicationContext,
+                        context,
                         ChargingDB::class.java,
                         "chargingDB"
                     )

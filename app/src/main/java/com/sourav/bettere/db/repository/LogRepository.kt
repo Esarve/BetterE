@@ -23,7 +23,10 @@ import com.sourav.bettere.db.entity.ChargingLog
 class LogRepository(private val logDao: LogDao) {
 
     val readAllDataLive: LiveData<List<ChargingLog>> = logDao.readALlDataLive()
-    val readAllData: List<ChargingLog> = logDao.readALlData()
+
+    suspend fun realAllData(): List<ChargingLog> {
+        return logDao.readALlData()
+    }
 
     suspend fun addLog(chargingLog: ChargingLog) {
         logDao.addLog(chargingLog)

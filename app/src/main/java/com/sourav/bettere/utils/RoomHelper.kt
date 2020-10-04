@@ -65,12 +65,12 @@ class RoomHelper private constructor(context: Context){
         }
     }
 
-    suspend fun getLastCycle(): Long{
+    suspend fun getLastCycle(): Long {
         return historyRepository.getLastCycle()
     }
 
 
-    fun getChargingLog(): List<ChargingLog>{
-        return logRepository.readAllData
+    suspend fun getChargingLog(): List<ChargingLog> {
+        return logRepository.realAllData()
     }
 }

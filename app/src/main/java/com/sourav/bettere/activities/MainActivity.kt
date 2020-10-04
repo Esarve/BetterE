@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(){
     private lateinit var frag: Fragment
-    private var roomHelper: RoomHelper = RoomHelper.getInstance(this)
+    private lateinit var roomHelper: RoomHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity(){
         adapter.addFragment(FragmentGraph.newInstance())
         adapter.addFragment(FragmentSettings.newInstance())
         viewPager.adapter = adapter
+        roomHelper = RoomHelper.getInstance(this)
 
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrolled(
