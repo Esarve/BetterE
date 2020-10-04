@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Sourav Das
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.sourav.bettere.service
 
 import android.app.Notification
@@ -21,9 +37,12 @@ import com.sourav.bettere.db.entity.ChargingLog
 import com.sourav.bettere.listeners.OnChargingListener
 import com.sourav.bettere.utils.Constants
 import com.sourav.bettere.utils.RoomHelper
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ChargeLoggerService : Service(), OnChargingListener {
+    private val TAG = Constants.SERVICE
     private lateinit var builder: NotificationCompat.Builder
     private lateinit var manager: NotificationManager
     private lateinit var receiver: ChargingBroadcast
@@ -72,7 +91,7 @@ class ChargeLoggerService : Service(), OnChargingListener {
         receiver = ChargingBroadcast.getinstance(this)
         receiver.setOnChargingListener(this)
         this.registerReceiver(receiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-        Log.d(Constants.SERVICE, "loadBroadcastReceiver: Finished")
+        Log.d(TAG, "loadBroadcastReceiver: Finished")
     }
 
     private fun buildNotification(): Notification {
@@ -89,21 +108,19 @@ class ChargeLoggerService : Service(), OnChargingListener {
         isCharging = true
         roomHelper = RoomHelper.getInstance(this)
 
-        Log.d(Constants.SERVICE, "ON Charging: Logging Started")
+        Log.d(TAG, "ON Charging: Logging Started")
         builder.setStyle(NotificationCompat.BigTextStyle().bigText("Charging: Logging Started"))
         showNotification(1)
 
         mBatteryManager = this.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
 
         GlobalScope.launch(Dispatchers.IO) {
-            GlobalScope.async {
-
-            }
-            cycle =  RoomHelper.getInstance(this).getLastCycle()
+            cycle = roomHelper.getLastCycle()
         }
 
-        if (isFinished){
-            Log.d(Constants.SERVICE, "ON Charging: Previous Charging Finished. New cycle will begin.")
+        if (isFinished) {
+            Log.d(TAG, "Current Value of Cycle is $cycle")
+            Log.d(TAG, "ON Charging: Previous Charging Finished. New cycle will begin.")
             startTime = System.currentTimeMillis()
             cycle++
         }
@@ -113,7 +130,7 @@ class ChargeLoggerService : Service(), OnChargingListener {
     override fun onDischarging() {
         isCharging = false
 
-        Log.d(Constants.SERVICE, "On Discharging: Fired")
+        Log.d(TAG, "On Discharging: Fired")
         builder.setStyle(NotificationCompat.BigTextStyle().bigText("Discharging"))
         showNotification(1)
 
@@ -133,6 +150,7 @@ class ChargeLoggerService : Service(), OnChargingListener {
             isFinished = true
             isRecorded = false
             logHistory()
+            Log.d(TAG, "finishLog: ")
         }
 
     }
@@ -177,7 +195,7 @@ class ChargeLoggerService : Service(), OnChargingListener {
             temp
         )
 
-       roomHelper.addLogData(chargingLog)
+        roomHelper.addLogData(chargingLog)
     }
 
     private fun getCurrent(): Long {

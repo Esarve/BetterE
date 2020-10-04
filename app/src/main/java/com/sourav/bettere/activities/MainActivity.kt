@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Sourav Das
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.sourav.bettere.activities
 
 import android.os.Bundle
@@ -11,19 +27,21 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.sourav.bettere.R
-import com.sourav.bettere.broadcasts.BatteryBroadcast
 import com.sourav.bettere.db.entity.ChargingLog
 import com.sourav.bettere.fragments.FragmentDefault
 import com.sourav.bettere.fragments.FragmentGraph
 import com.sourav.bettere.fragments.FragmentSettings
 import com.sourav.bettere.utils.Constants
 import com.sourav.bettere.utils.RoomHelper
-import com.sourav.bettere.utils.Utilities
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(){
     private lateinit var frag: Fragment
+    private var roomHelper: RoomHelper = RoomHelper.getInstance(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,7 +85,7 @@ class MainActivity : AppCompatActivity(){
         printLog("PRINTING")
         var list: List<ChargingLog>? = null
         val operation = GlobalScope.async {
-            list = RoomHelper.getInstance(this).getChargingLog()
+            list = roomHelper.getChargingLog()
         }
 
         if (list!!.isNotEmpty()) {

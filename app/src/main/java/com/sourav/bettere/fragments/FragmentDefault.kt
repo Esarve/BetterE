@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Sourav Das
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.sourav.bettere.fragments
 
 import android.content.Context
@@ -58,7 +74,7 @@ class FragmentDefault : Fragment(), ChargingEventListener {
     }
 
     private fun loadEngine() {
-        jobC = GlobalScope.launch(Dispatchers.Main) {
+        jobC = GlobalScope.launch(Dispatchers.Default) {
             getCurrent()
             loadBroadcastReceiver()
         }
@@ -67,8 +83,6 @@ class FragmentDefault : Fragment(), ChargingEventListener {
     }
 
     private suspend fun getCurrent() {
-
-
         while (jobC.isActive) {
             val current =
                 mBatteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
@@ -78,9 +92,15 @@ class FragmentDefault : Fragment(), ChargingEventListener {
             Log.d(Constants.DEFAULT, "Current: $current")
             Log.d(Constants.DEFAULT, "Current Thread ${Thread.currentThread().name}")
 
-            val value= current.substring(1)
-            ampValue?.text = value.plus(" mAh")
+            viewOnMain(current)
             delay(delayTime)
+        }
+    }
+
+    private suspend fun viewOnMain(text: String) {
+        withContext(Dispatchers.Main) {
+            val value = text.substring(1)
+            ampValue?.text = value.plus(" mAh")
         }
     }
 
