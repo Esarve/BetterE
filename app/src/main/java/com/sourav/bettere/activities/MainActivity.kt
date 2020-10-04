@@ -36,7 +36,6 @@ import com.sourav.bettere.utils.RoomHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(){
@@ -85,26 +84,26 @@ class MainActivity : AppCompatActivity(){
     private fun printDatabase() {
         printLog("PRINTING")
         var list: List<ChargingLog>? = null
-        val operation = GlobalScope.async {
+        GlobalScope.launch(Dispatchers.IO) {
             list = roomHelper.getChargingLog()
-        }
 
-        if (list!!.isNotEmpty()) {
-            for (log: ChargingLog in list!!) {
-                val msg: String = "LOG: "
-                    .plus(log.timestamp)
-                    .plus(" ")
-                    .plus(log.cycle)
-                    .plus(" ")
-                    .plus(log.percentage)
-                    .plus(" ")
-                    .plus(log.current)
-                    .plus(" ")
-                    .plus(log.voltage)
-                    .plus(" ")
-                    .plus(log.temp)
+            if (list!!.isNotEmpty()) {
+                for (log: ChargingLog in list!!) {
+                    val msg: String = "LOG: "
+                        .plus(log.timestamp)
+                        .plus(" ")
+                        .plus(log.cycle)
+                        .plus(" ")
+                        .plus(log.percentage)
+                        .plus(" ")
+                        .plus(log.current)
+                        .plus(" ")
+                        .plus(log.voltage)
+                        .plus(" ")
+                        .plus(log.temp)
 
-                printLog(msg)
+                    printLog(msg)
+                }
             }
         }
     }

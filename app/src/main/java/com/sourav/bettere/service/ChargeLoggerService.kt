@@ -32,8 +32,11 @@ import androidx.core.app.NotificationManagerCompat
 import com.sourav.bettere.App.Companion.CHANNEL_ID
 import com.sourav.bettere.R
 import com.sourav.bettere.broadcasts.ChargingBroadcast
+import com.sourav.bettere.db.ChargingDB
 import com.sourav.bettere.db.entity.ChargingHistory
 import com.sourav.bettere.db.entity.ChargingLog
+import com.sourav.bettere.db.repository.HistoryRepository
+import com.sourav.bettere.db.repository.LogRepository
 import com.sourav.bettere.listeners.OnChargingListener
 import com.sourav.bettere.utils.Constants
 import com.sourav.bettere.utils.RoomHelper
@@ -49,6 +52,9 @@ class ChargeLoggerService : Service(), OnChargingListener {
     private lateinit var mBatteryManager: BatteryManager
     private lateinit var roomHelper: RoomHelper
 
+    private var logRepository: LogRepository
+    private var historyRepository: HistoryRepository
+
     private var cycle: Long = 0
     private var startTime: Long = 0
     private var startedP = -1
@@ -61,9 +67,19 @@ class ChargeLoggerService : Service(), OnChargingListener {
 
     override fun onCreate() {
         super.onCreate()
+        roomHelper = RoomHelper.getInstance(this)
         initNotificationManager()
         initNotification()
         loadBroadcastReceiver()
+    }
+
+    init {
+        val logDao = ChargingDB.getInstance(this).logDao()
+        val historyDao = ChargingDB.getInstance(this).historyDao()
+
+        logRepository = LogRepository(logDao)
+        historyRepository = HistoryRepository(historyDao)
+
     }
 
     private fun initNotification() {
@@ -105,9 +121,6 @@ class ChargeLoggerService : Service(), OnChargingListener {
     }
 
     override fun onCharging() {
-        isCharging = true
-        roomHelper = RoomHelper.getInstance(this)
-
         Log.d(TAG, "ON Charging: Logging Started")
         builder.setStyle(NotificationCompat.BigTextStyle().bigText("Charging: Logging Started"))
         showNotification(1)
@@ -115,34 +128,38 @@ class ChargeLoggerService : Service(), OnChargingListener {
         mBatteryManager = this.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
 
         GlobalScope.launch(Dispatchers.IO) {
-            cycle = roomHelper.getLastCycle()
-        }
+            cycle = historyRepository.getLastCycle()
+            Log.d(TAG, "onCharging: CYCLE FOUND $cycle")
 
-        if (isFinished) {
-            Log.d(TAG, "Current Value of Cycle is $cycle")
-            Log.d(TAG, "ON Charging: Previous Charging Finished. New cycle will begin.")
-            startTime = System.currentTimeMillis()
-            cycle++
+            if (isFinished) {
+                Log.d(TAG, "Current Value of Cycle is $cycle")
+                Log.d(TAG, "ON Charging: Previous Charging Finished. New cycle will begin.")
+                startTime = System.currentTimeMillis()
+                cycle++
+                Log.d(TAG, "onCharging: Cycle Incremented")
+            }
         }
-
+        isCharging = true
     }
 
     override fun onDischarging() {
-        isCharging = false
-
-        Log.d(TAG, "On Discharging: Fired")
+        Log.e(TAG, "On Discharging: Fired")
         builder.setStyle(NotificationCompat.BigTextStyle().bigText("Discharging"))
         showNotification(1)
 
-        object : CountDownTimer(300000, 10000){
-            override fun onTick(p0: Long) {
-                isFinished = false
-            }
+        if (isCharging) {
+            object : CountDownTimer(60000, 10000) {
+                override fun onTick(p0: Long) {
+                    isFinished = false
+                }
 
-            override fun onFinish() {
-                finishLog()
-            }
-        }.start()
+                override fun onFinish() {
+                    finishLog()
+                    Log.d(TAG, "onFinish: Secession Finished")
+                }
+            }.start()
+        }
+        isCharging = false
     }
 
     private fun finishLog() {
@@ -150,25 +167,30 @@ class ChargeLoggerService : Service(), OnChargingListener {
             isFinished = true
             isRecorded = false
             logHistory()
-            Log.d(TAG, "finishLog: ")
+
         }
 
     }
 
     private fun logHistory() {
-        val chargingHistory = ChargingHistory(
-            cycle,
-            startTime,
-            System.currentTimeMillis(),
-            startedP,
-            endedP
-        )
+        GlobalScope.launch(Dispatchers.IO) {
+            val chargingHistory = ChargingHistory(
+                cycle,
+                startTime,
+                System.currentTimeMillis(),
+                startedP,
+                endedP
+            )
+            historyRepository.addHistory(chargingHistory)
+            Log.d(TAG, "finishLog: ")
+        }
 
-        roomHelper.addHistoryData(chargingHistory)
     }
 
     override fun onReceive(voltage: Double, percentage: Int, temp: Double) {
+        Log.d(TAG, "onReceive: isCharging $isCharging")
         if (isCharging) {
+            Log.d(TAG, "onReceive: Inside Charging Block")
             builder.setStyle(
                 NotificationCompat.BigTextStyle()
                     .bigText("Charging: voltage: $voltage, Temp: $temp, Percentage: $percentage")
@@ -185,17 +207,18 @@ class ChargeLoggerService : Service(), OnChargingListener {
     }
 
     private fun logCharge(voltage: Double, percentage: Int, temp: Double) {
-
-        val chargingLog = ChargingLog(
-            System.currentTimeMillis(),
-            cycle,
-            percentage,
-            getCurrent(),
-            voltage,
-            temp
-        )
-
-        roomHelper.addLogData(chargingLog)
+        GlobalScope.launch(Dispatchers.IO) {
+            val chargingLog = ChargingLog(
+                System.currentTimeMillis(),
+                cycle,
+                percentage,
+                getCurrent(),
+                voltage,
+                temp
+            )
+            logRepository.addLog(chargingLog)
+            Log.d(TAG, "Added To DB: $chargingLog")
+        }
     }
 
     private fun getCurrent(): Long {

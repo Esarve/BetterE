@@ -26,6 +26,7 @@ import com.sourav.bettere.listeners.OnChargingListener
 import com.sourav.bettere.utils.Constants
 
 class ChargingBroadcast : BroadcastReceiver() {
+    private val TAG = Constants.SERVICE
     private var stillCharging: Boolean = false
     private var stilldischarging: Boolean = false
 
@@ -51,6 +52,7 @@ class ChargingBroadcast : BroadcastReceiver() {
         Log.d(Constants.SERVICE, "Battery Info: $string")
 
         if (isPresent!!) {
+            Log.d(TAG, "onReceive: isPresent $isPresent")
             val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
             val volt: Double? = bundle?.getInt("voltage")?.div(1000.0)
             val level: Int? = bundle?.getInt("level")
@@ -58,6 +60,7 @@ class ChargingBroadcast : BroadcastReceiver() {
 
             try {
                 getChargingStatus(plugged!!)
+                Log.d(TAG, "onReceive: Fired onReceive from Broadcast Listener")
                 listenerOnCharging!!.onReceive(volt!!, level!!, temp!!)
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -50,7 +50,6 @@ class RoomHelper private constructor(context: Context){
 
         logRepository = LogRepository(logDao)
         historyRepository = HistoryRepository(historyDao)
-
     }
 
     fun addLogData(chargingLog: ChargingLog) {
