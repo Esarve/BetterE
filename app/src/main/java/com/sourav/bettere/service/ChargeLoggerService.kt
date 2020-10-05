@@ -55,6 +55,9 @@ class ChargeLoggerService : Service(), OnChargingListener {
     private var logRepository: LogRepository
     private var historyRepository: HistoryRepository
 
+    private var lastCurrent: Long = -1L
+    private var lastLevel: Int = -1
+
     private var cycle: Long = 0
     private var startTime: Long = 0
     private var startedP = -1
@@ -128,7 +131,13 @@ class ChargeLoggerService : Service(), OnChargingListener {
         mBatteryManager = this.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
 
         GlobalScope.launch(Dispatchers.IO) {
-            cycle = historyRepository.getLastCycle()
+            try {
+                cycle = historyRepository.getLastCycle()
+            } catch (e: Exception) {
+                cycle = 0L
+                e.printStackTrace()
+            }
+
             Log.d(TAG, "onCharging: CYCLE FOUND $cycle")
 
             if (isFinished) {
@@ -207,23 +216,33 @@ class ChargeLoggerService : Service(), OnChargingListener {
     }
 
     private fun logCharge(voltage: Double, percentage: Int, temp: Double) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val chargingLog = ChargingLog(
-                System.currentTimeMillis(),
-                cycle,
-                percentage,
-                getCurrent(),
-                voltage,
-                temp
-            )
-            logRepository.addLog(chargingLog)
-            Log.d(TAG, "Added To DB: $chargingLog")
+        if (validateCharge(percentage, getCurrent())) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val current = getCurrent()
+                val chargingLog = ChargingLog(
+                    System.currentTimeMillis(),
+                    cycle,
+                    percentage,
+                    current,
+                    voltage,
+                    temp
+                )
+                lastCurrent = current
+                lastLevel = percentage
+                logRepository.addLog(chargingLog)
+                Log.d(TAG, "Added To DB: $chargingLog")
+            }
         }
+
+    }
+
+    private fun validateCharge(percentage: Int, current: Long): Boolean {
+        return !(lastCurrent == current && lastLevel == percentage)
     }
 
     private fun getCurrent(): Long {
-        return  mBatteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
-            .div(1000)
+        return mBatteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+            .div(1000).times(-1)
     }
 
     private fun showNotification(id: Int) {
