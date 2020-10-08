@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sourav.bettere.db.repository
+package com.sourav.bettere.repository
 
 import androidx.lifecycle.LiveData
 import com.sourav.bettere.db.dao.LogDao

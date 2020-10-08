@@ -24,13 +24,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.sourav.bettere.R
 import com.sourav.bettere.service.ChargeLoggerService
 import com.sourav.bettere.utils.Constants
+import com.sourav.bettere.viewModel.ChargingDataViewModel
 
 class FragmentGraph : Fragment() {
     private lateinit var mContext: Context
+    private lateinit var batteryViewModel: ChargingDataViewModel
 
     companion object {
         fun newInstance(): FragmentGraph {
@@ -51,30 +55,9 @@ class FragmentGraph : Fragment() {
 
         val intent: Intent = Intent(mContext, ChargeLoggerService::class.java)
         val mView = inflater.inflate(R.layout.graph_fragment, container, false)
-
-
-        /* val constrains = Constraints.Builder()
-             .setRequiresCharging(true)
-             .build()
-
-         val request: WorkRequest =
-             OneTimeWorkRequestBuilder<ChargingLogger>().setConstraints(constrains).build()*/
-
         val switch: SwitchMaterial? = mView?.findViewById(R.id.loggerTrigger)
 
-        /*WorkManager.getInstance(mContext).getWorkInfoByIdLiveData(request.id).observe(
-            this,
-            Observer {
-                if (it.state.isFinished) {
-                    Log.d(Constants.GRAPH, "onCreateView: WORKING FINISHED")
-                    val notificationManager:NotificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    notificationManager.cancel(1)
-                    WorkManager.getInstance(mContext).enqueue(request)
-                }
-            })*/
-
         if (switch!!.isChecked){
-//            WorkManager.getInstance(mContext).enqueue(request)
             Log.d(Constants.GRAPH, "onCreateView: Worker Activated")
         }
 
@@ -87,6 +70,11 @@ class FragmentGraph : Fragment() {
                 activity!!.stopService(intent)
             }
         }
+
+        batteryViewModel = ViewModelProvider(this).get(ChargingDataViewModel::class.java)
+        batteryViewModel.readHistoryData.observe(viewLifecycleOwner, Observer { history ->
+            //todo: do whatever needs to be done
+        })
 
         return mView
     }

@@ -35,8 +35,8 @@ import com.sourav.bettere.broadcasts.ChargingBroadcast
 import com.sourav.bettere.db.ChargingDB
 import com.sourav.bettere.db.entity.ChargingHistory
 import com.sourav.bettere.db.entity.ChargingLog
-import com.sourav.bettere.db.repository.HistoryRepository
-import com.sourav.bettere.db.repository.LogRepository
+import com.sourav.bettere.repository.HistoryRepository
+import com.sourav.bettere.repository.LogRepository
 import com.sourav.bettere.listeners.OnChargingListener
 import com.sourav.bettere.utils.Constants
 import com.sourav.bettere.utils.RoomHelper

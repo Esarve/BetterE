@@ -20,8 +20,8 @@ import android.content.Context
 import com.sourav.bettere.db.ChargingDB
 import com.sourav.bettere.db.entity.ChargingHistory
 import com.sourav.bettere.db.entity.ChargingLog
-import com.sourav.bettere.db.repository.HistoryRepository
-import com.sourav.bettere.db.repository.LogRepository
+import com.sourav.bettere.repository.HistoryRepository
+import com.sourav.bettere.repository.LogRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
