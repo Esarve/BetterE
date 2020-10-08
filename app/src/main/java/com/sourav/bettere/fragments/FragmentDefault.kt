@@ -76,8 +76,8 @@ class FragmentDefault : Fragment(), ChargingEventListener {
     private fun loadEngine() {
         jobC = GlobalScope.launch(Dispatchers.Default) {
             getCurrent()
-            loadBroadcastReceiver()
         }
+        loadBroadcastReceiver()
 
         jobB = GlobalScope.launch(Dispatchers.Default) { loadBroadcastReceiver() }
     }
@@ -99,8 +99,7 @@ class FragmentDefault : Fragment(), ChargingEventListener {
 
     private suspend fun viewOnMain(text: String) {
         withContext(Dispatchers.Main) {
-            val value = text.substring(1)
-            ampValue?.text = value.plus(" mAh")
+            ampValue?.text = text.replace("-","",true).plus(" mAh")
         }
     }
 
