@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright 2020 Sourav Das
  *
@@ -30,6 +31,18 @@ class Utilities private constructor(context: Context) {
     companion object {
         private var instance: Utilities? = null
 
+=======
+package com.sourav.bettere.utils
+
+import android.content.Context
+import android.os.BatteryManager
+
+class Utilities private constructor(context: Context){
+
+    companion object {
+        private var mContext: Context? = null
+        private var instance: Utilities? = null
+>>>>>>> origin/add_db
         fun getInstance(context: Context): Utilities {
             if (instance == null) {
                 instance = Utilities(context)

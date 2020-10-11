@@ -19,8 +19,8 @@ package com.sourav.bettere.utils
 import android.content.Context
 import com.sourav.bettere.db.ChargingDB
 import com.sourav.bettere.db.entity.ChargingLog
-import com.sourav.bettere.db.repository.HistoryRepository
-import com.sourav.bettere.db.repository.LogRepository
+import com.sourav.bettere.repository.HistoryRepository
+import com.sourav.bettere.repository.LogRepository
 
 class RoomHelper private constructor(context: Context){
 
