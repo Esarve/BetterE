@@ -32,11 +32,20 @@ class Constants {
         const val GRAPH = "GraphFragment"
         const val SETTINGS = "SettingsFragment"
         const val DATABASE = "dbresult"
+        const val UTILS = "utils"
 
         //FOR notifications
         const val TITLE = "Monitoring Service is Running"
         const val BODY = "BetterE will log charging events as soon as plugged in"
 
-        const val SERVICE_CYCLE = "cycle"
+        //FOR PREF TYPE
+        const val PREF_NAME = "betterE_pref"
+        const val PREF_TYPE_BOOL = "bool"
+        const val PREF_TYPE_INT = "int"
+        const val PREF_TYPE_STRING = "string"
+
+        //FOR PREF KEY
+        const val PREF_KEY_SERVICE = "prefservice"
+
     }
 }

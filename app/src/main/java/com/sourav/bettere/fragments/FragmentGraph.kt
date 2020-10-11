@@ -28,8 +28,13 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.sourav.bettere.R
 import com.sourav.bettere.service.ChargeLoggerService
 import com.sourav.bettere.utils.Constants
+import com.sourav.bettere.utils.Utilities
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class FragmentGraph : Fragment() {
+    private lateinit var utilities: Utilities
     private lateinit var mContext: Context
 
     companion object {
@@ -40,6 +45,7 @@ class FragmentGraph : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mContext = activity!!.applicationContext
+        utilities = Utilities.getInstance(mContext)
         super.onCreate(savedInstanceState)
     }
 
@@ -80,11 +86,26 @@ class FragmentGraph : Fragment() {
 
         switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    activity!!.startService(intent)
+                    utilities.writeToPref(
+                        type = Constants.PREF_TYPE_BOOL,
+                        key = Constants.PREF_KEY_SERVICE,
+                        valueBool = true
+                    )
+                    Log.d(Constants.GRAPH, "onCreateView: Switch Listener Fired")
+                }
 //                WorkManager.getInstance(mContext).enqueue(request)
-                activity!!.startService(intent)
-                Log.d(Constants.GRAPH, "onCreateView: Switch Listener Fired")
             } else {
-                activity!!.stopService(intent)
+                GlobalScope.launch(Dispatchers.IO) {
+                    activity!!.stopService(intent)
+                    utilities.writeToPref(
+                        type = Constants.PREF_TYPE_BOOL,
+                        key = Constants.PREF_KEY_SERVICE,
+                        valueBool = false
+                    )
+                    Log.d(Constants.GRAPH, "onCreateView: Switch Listener Fired")
+                }
             }
         }
 

@@ -52,6 +52,7 @@ class FragmentDefault : Fragment(), ChargingEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         mContext = requireActivity().applicationContext
         mBatteryManager = mContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+
         super.onCreate(savedInstanceState)
     }
 

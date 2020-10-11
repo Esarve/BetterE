@@ -18,13 +18,9 @@ package com.sourav.bettere.utils
 
 import android.content.Context
 import com.sourav.bettere.db.ChargingDB
-import com.sourav.bettere.db.entity.ChargingHistory
 import com.sourav.bettere.db.entity.ChargingLog
 import com.sourav.bettere.db.repository.HistoryRepository
 import com.sourav.bettere.db.repository.LogRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class RoomHelper private constructor(context: Context){
 
@@ -52,21 +48,6 @@ class RoomHelper private constructor(context: Context){
         historyRepository = HistoryRepository(historyDao)
     }
 
-    fun addLogData(chargingLog: ChargingLog) {
-        GlobalScope.launch(Dispatchers.IO) {
-            logRepository.addLog(chargingLog)
-        }
-    }
-
-    fun addHistoryData(chargingHistory: ChargingHistory) {
-        GlobalScope.launch(Dispatchers.IO) {
-            historyRepository.addHistory(chargingHistory)
-        }
-    }
-
-    suspend fun getLastCycle(): Long {
-        return historyRepository.getLastCycle()
-    }
 
 
     suspend fun getChargingLog(): List<ChargingLog> {
