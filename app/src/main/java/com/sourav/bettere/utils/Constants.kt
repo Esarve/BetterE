@@ -47,5 +47,8 @@ class Constants {
         //FOR PREF KEY
         const val PREF_KEY_SERVICE = "prefservice"
 
+        //TimeData
+        const val TIME_DATE_FORMAT = "MMMM dd,  hh:mm a"
+
     }
 }

@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.sourav.bettere.R
 import com.sourav.bettere.adapters.HistoryAdapter
+import com.sourav.bettere.db.entity.ChargingHistory
 import com.sourav.bettere.service.ChargeLoggerService
 import com.sourav.bettere.utils.Constants
 import com.sourav.bettere.utils.Utilities
@@ -67,12 +68,20 @@ class FragmentGraph : Fragment() {
         val rview: RecyclerView = mView.findViewById(R.id.rvHistory)
         val switch: SwitchMaterial? = mView?.findViewById(R.id.loggerTrigger)
         val linearLayoutManager = LinearLayoutManager(this.context)
+        val historyList = mutableListOf<ChargingHistory>()
+        val adapter = HistoryAdapter(R.layout.historyadapter, historyList)
 
         rview.layoutManager = linearLayoutManager
+        rview.adapter = adapter
+
         batteryViewModel = ViewModelProvider(this).get(ChargingDataViewModel::class.java)
         batteryViewModel.readHistoryData.observe(viewLifecycleOwner, Observer { history ->
-            rview.adapter = HistoryAdapter(R.layout.historyadapter, history.toMutableList())
+            historyList.addAll(history)
+            Log.d(Constants.GRAPH, "onCreateView: $history")
+            adapter.notifyDataSetChanged()
         })
+
+
 
         if (switch!!.isChecked) {
             Log.d(Constants.GRAPH, "onCreateView: Worker Activated")
