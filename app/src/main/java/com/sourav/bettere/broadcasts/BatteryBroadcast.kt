@@ -44,10 +44,12 @@ class BatteryBroadcast: BroadcastReceiver() {
         if (isPresent!!) {
             val volt: Double? = bundle?.getInt("voltage")?.div(1000.0);
             val level: Int? = bundle?.getInt("level")
+            val temp: Double? = bundle?.getInt("temperature")?.div(10.0)
             val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
             try {
                 listener!!.onVoltageChange(volt.toString())
                 listener!!.onBatteryPercentageChange(level.toString().plus("%"))
+                listener!!.onTempChange(temp.toString().plus("\u2103"))
                 Log.d(Constants.BROADCAST, "voltage: $volt")
                 listener!!.onChargingStatusChange((getChargingStatus(plugged!!)))
             } catch (e: Exception) {

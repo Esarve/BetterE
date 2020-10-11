@@ -100,12 +100,16 @@ class FragmentDefault : Fragment(), ChargingEventListener {
 
     private suspend fun viewOnMain(text: String) {
         withContext(Dispatchers.Main) {
-            ampValue?.text = text.replace("-","",true).plus(" mAh")
+            ampValue?.text = text.replace("-", "", true).plus(" mAh")
         }
     }
 
     override fun onVoltageChange(value: String) {
         voltValue?.text = value.plus(" V")
+    }
+
+    override fun onTempChange(value: String) {
+        tempValue?.text = value
     }
 
     override fun onChargingStatusChange(status: String) {
