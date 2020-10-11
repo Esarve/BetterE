@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * Copyright 2020 Sourav Das
  *
@@ -29,20 +28,8 @@ class Utilities private constructor(context: Context) {
         context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
 
     companion object {
-        private var instance: Utilities? = null
-
-=======
-package com.sourav.bettere.utils
-
-import android.content.Context
-import android.os.BatteryManager
-
-class Utilities private constructor(context: Context){
-
-    companion object {
         private var mContext: Context? = null
         private var instance: Utilities? = null
->>>>>>> origin/add_db
         fun getInstance(context: Context): Utilities {
             if (instance == null) {
                 instance = Utilities(context)
@@ -63,18 +50,27 @@ class Utilities private constructor(context: Context){
                 Constants.PREF_TYPE_INT -> {
                     putInt(key, valueInt)
                     apply()
-                    Log.d(TAG, "writeToPref: Success with type: $type key: $key, value: $valueInt")
+                    Log.d(
+                        TAG,
+                        "writeToPref: Success with type: $type key: $key, value: $valueInt"
+                    )
                 }
                 Constants.PREF_TYPE_BOOL -> {
                     putBoolean(key, valueBool)
                     apply()
-                    Log.d(TAG, "writeToPref: Success with type: $type key: $key, value: $valueBool")
+                    Log.d(
+                        TAG,
+                        "writeToPref: Success with type: $type key: $key, value: $valueBool"
+                    )
 
                 }
                 Constants.PREF_TYPE_STRING -> {
                     putString(key, valueStr)
                     apply()
-                    Log.d(TAG, "writeToPref: Success with type: $type key: $key, value: $valueStr")
+                    Log.d(
+                        TAG,
+                        "writeToPref: Success with type: $type key: $key, value: $valueStr"
+                    )
 
                 }
                 else -> throw InputMismatchException("Wrong TYPE OR WHATEVER")
