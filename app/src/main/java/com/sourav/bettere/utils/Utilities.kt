@@ -19,6 +19,7 @@ package com.sourav.bettere.utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Utilities private constructor(context: Context) {
@@ -85,5 +86,11 @@ class Utilities private constructor(context: Context) {
             Constants.PREF_TYPE_BOOL -> sharedPreferences.getBoolean(key, false) as T
             else -> throw InputMismatchException("WRONG TYPE BRUH")
         }
+    }
+
+    fun getDateTime(timestamp: Long): String {
+        val sdf: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a")
+        val now: Date = Date(timestamp)
+        return sdf.format(now)
     }
 }

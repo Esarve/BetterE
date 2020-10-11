@@ -26,12 +26,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.sourav.bettere.R
+import com.sourav.bettere.adapters.HistoryAdapter
 import com.sourav.bettere.service.ChargeLoggerService
 import com.sourav.bettere.utils.Constants
-import com.sourav.bettere.viewModel.ChargingDataViewModel
 import com.sourav.bettere.utils.Utilities
+import com.sourav.bettere.viewModel.ChargingDataViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -61,9 +64,17 @@ class FragmentGraph : Fragment() {
 
         val intent: Intent = Intent(mContext, ChargeLoggerService::class.java)
         val mView = inflater.inflate(R.layout.graph_fragment, container, false)
+        val rview: RecyclerView = mView.findViewById(R.id.rvHistory)
         val switch: SwitchMaterial? = mView?.findViewById(R.id.loggerTrigger)
+        val linearLayoutManager = LinearLayoutManager(this.context)
 
-        if (switch!!.isChecked){
+        rview.layoutManager = linearLayoutManager
+        batteryViewModel = ViewModelProvider(this).get(ChargingDataViewModel::class.java)
+        batteryViewModel.readHistoryData.observe(viewLifecycleOwner, Observer { history ->
+            rview.adapter = HistoryAdapter(R.layout.historyadapter, history.toMutableList())
+        })
+
+        if (switch!!.isChecked) {
             Log.d(Constants.GRAPH, "onCreateView: Worker Activated")
         }
 
@@ -91,12 +102,6 @@ class FragmentGraph : Fragment() {
                 }
             }
         }
-
-        batteryViewModel = ViewModelProvider(this).get(ChargingDataViewModel::class.java)
-        batteryViewModel.readHistoryData.observe(viewLifecycleOwner, Observer { history ->
-            //todo: do whatever needs to be done
-        })
-
         return mView
     }
 }
