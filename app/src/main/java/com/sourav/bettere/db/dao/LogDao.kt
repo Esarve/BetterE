@@ -32,6 +32,9 @@ interface LogDao {
     @Query("SELECT * FROM charging_log ORDER BY percentage ASC")
     fun readALlDataLive(): LiveData<List<ChargingLog>>
 
+    @Query("SELECT * FROM charging_log WHERE cycle=:x ORDER BY percentage ASC")
+    fun readDataForAHistory(x: Long): List<ChargingLog>
+
     @Query("SELECT * FROM charging_log ORDER BY percentage ASC")
     fun readALlData(): List<ChargingLog>
 }

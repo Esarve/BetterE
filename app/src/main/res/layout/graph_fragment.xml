@@ -43,7 +43,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/rvParent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/layout_bg"
@@ -82,7 +82,26 @@
         app:layout_constraintBottom_toBottomOf="@id/guideline1"
         app:layout_constraintTop_toBottomOf="@+id/guideline2"
         app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteX="0dp"></LinearLayout>
+        tools:layout_editor_absoluteX="0dp">
+
+        <TextView
+            android:id="@+id/backToRecyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:gravity="center"
+            android:text="Go Back"
+            android:textColor="@color/textPrimaryLight"
+            android:textSize="@dimen/_16ssp"
+            android:layout_gravity="start"
+            app:drawableStartCompat="@drawable/ic_outline_arrow_back_24" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="95" />
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline1"

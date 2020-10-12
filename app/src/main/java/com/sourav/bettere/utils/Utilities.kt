@@ -19,6 +19,9 @@ package com.sourav.bettere.utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.github.mikephil.charting.data.Entry
+import com.sourav.bettere.db.entity.ChargingLog
+import com.sourav.bettere.model.PercentageAmpModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -92,5 +95,38 @@ class Utilities private constructor(context: Context) {
         val sdf: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a")
         val now: Date = Date(timestamp)
         return sdf.format(now)
+    }
+
+    fun generateAverage(data: List<ChargingLog>): List<Entry> {
+        val newList = arrayListOf<PercentageAmpModel>()
+        val amps = arrayListOf<Long>()
+        var currentP = data[0].percentage
+        for (log in data) {
+            if (log.percentage == currentP) {
+                amps.add(log.current)
+            } else {
+                newList.add(
+                    PercentageAmpModel(
+                        log.percentage - 1,
+                        amps.average().toLong()
+                    )
+                )
+                currentP = log.percentage
+                amps.clear()
+            }
+        }
+
+        val entry = arrayListOf<Entry>()
+
+        for (chargingLog in newList) {
+            entry.add(
+                Entry(
+                    chargingLog.percentage.toFloat(),
+                    chargingLog.current.toFloat()
+                )
+            )
+        }
+
+        return entry
     }
 }
