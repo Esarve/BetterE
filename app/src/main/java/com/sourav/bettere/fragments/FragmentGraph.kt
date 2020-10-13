@@ -16,6 +16,7 @@
 
 package com.sourav.bettere.fragments
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -52,11 +53,16 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 class FragmentGraph : Fragment() {
     private lateinit var utilities: Utilities
     private lateinit var mContext: Context
     private lateinit var viewModelHistory: ChargingDataViewModel
     private lateinit var linechart: LineChart
+    private lateinit var switch: SwitchMaterial
+    private lateinit var mView: View
+    private lateinit var backButton: TextView
+    private lateinit var intent: Intent
 
     companion object {
         fun newInstance(): FragmentGraph {
@@ -75,15 +81,16 @@ class FragmentGraph : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mView = inflater.inflate(R.layout.graph_fragment, container, false)
+        backButton = mView.findViewById(R.id.backToRecyclerView) as TextView
+        intent = Intent(mContext, ChargeLoggerService::class.java)
 
-        val intent: Intent = Intent(mContext, ChargeLoggerService::class.java)
-        val mView = inflater.inflate(R.layout.graph_fragment, container, false)
         val rview: RecyclerView = mView.findViewById(R.id.rvHistory)
-        val switch: SwitchMaterial? = mView?.findViewById(R.id.loggerTrigger)
         val linearLayoutManager = LinearLayoutManager(this.context)
         val historyList = mutableListOf<ChargingHistory>()
         val adapter = HistoryAdapter(R.layout.historyadapter, historyList)
-        val backButton = mView?.findViewById(R.id.backToRecyclerView) as TextView
+
+        initToggle()
         linechart = mView.findViewById(R.id.lineChart) as LineChart
 
         rview.layoutManager = linearLayoutManager
@@ -110,35 +117,6 @@ class FragmentGraph : Fragment() {
             }
         }
 
-        if (switch!!.isChecked) {
-            Log.d(Constants.GRAPH, "onCreateView: Worker Activated")
-        }
-
-        switch.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    activity!!.startService(intent)
-                    utilities.writeToPref(
-                        type = Constants.PREF_TYPE_BOOL,
-                        key = Constants.PREF_KEY_SERVICE,
-                        valueBool = true
-                    )
-                    Log.d(Constants.GRAPH, "onCreateView: Switch Listener Fired")
-                }
-//                WorkManager.getInstance(mContext).enqueue(request)
-            } else {
-                GlobalScope.launch(Dispatchers.IO) {
-                    activity!!.stopService(intent)
-                    utilities.writeToPref(
-                        type = Constants.PREF_TYPE_BOOL,
-                        key = Constants.PREF_KEY_SERVICE,
-                        valueBool = false
-                    )
-                    Log.d(Constants.GRAPH, "onCreateView: Switch Listener Fired")
-                }
-            }
-        }
-
         backButton.setOnClickListener {
             if (!rvParent.isVisible && graphLayout.isVisible) {
                 graphLayout.visibility = View.GONE
@@ -146,6 +124,28 @@ class FragmentGraph : Fragment() {
             }
         }
         return mView
+    }
+
+    private fun startService() {
+        activity!!.startService(intent)
+        Log.d(Constants.GRAPH, "startService: Service Started")
+    }
+
+    private fun stopService() {
+        activity!!.stopService(intent)
+        Log.d(Constants.GRAPH, "stopService: Service Stopped")
+    }
+
+    private fun initToggle() {
+        switch = mView.findViewById(R.id.loggerTrigger)
+        if (isServiceRunning(ChargeLoggerService::class.java.simpleName)) {
+            switch.isEnabled = true
+        }
+
+        switch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) startService()
+            else stopService()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -182,5 +182,18 @@ class FragmentGraph : Fragment() {
         }
     }
 
+    @Suppress("DEPRECATION")
+    fun isServiceRunning(serviceClassName: String?): Boolean {
+        val activityManager =
+            mContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val services: List<ActivityManager.RunningServiceInfo> =
+            activityManager.getRunningServices(Int.MAX_VALUE)
+        for (runningServiceInfo in services) {
+            if (runningServiceInfo.service.className == serviceClassName) {
+                return true
+            }
+        }
+        return false
+    }
 
 }

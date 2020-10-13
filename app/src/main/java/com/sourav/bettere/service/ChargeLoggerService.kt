@@ -44,7 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ChargeLoggerService : Service(), OnChargingListener {
+class ChargeLoggerService() : Service(), OnChargingListener {
     private val TAG = Constants.SERVICE
     private lateinit var builder: NotificationCompat.Builder
     private lateinit var manager: NotificationManager
