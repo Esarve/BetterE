@@ -63,6 +63,7 @@ class FragmentGraph : Fragment() {
     private lateinit var mView: View
     private lateinit var backButton: TextView
     private lateinit var intent: Intent
+    private lateinit var service: ChargeLoggerService
 
     companion object {
         fun newInstance(): FragmentGraph {
@@ -138,8 +139,8 @@ class FragmentGraph : Fragment() {
 
     private fun initToggle() {
         switch = mView.findViewById(R.id.loggerTrigger)
-        if (isServiceRunning(ChargeLoggerService::class.java.simpleName)) {
-            switch.isEnabled = true
+        if (isMyServiceRunning(ChargeLoggerService::class.java)) {
+            switch.isChecked = true
         }
 
         switch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -183,17 +184,19 @@ class FragmentGraph : Fragment() {
     }
 
     @Suppress("DEPRECATION")
-    fun isServiceRunning(serviceClassName: String?): Boolean {
-        val activityManager =
-            mContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val services: List<ActivityManager.RunningServiceInfo> =
-            activityManager.getRunningServices(Int.MAX_VALUE)
-        for (runningServiceInfo in services) {
-            if (runningServiceInfo.service.className == serviceClassName) {
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = mContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
                 return true
             }
         }
         return false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initToggle()
     }
 
 }
