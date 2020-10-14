@@ -23,17 +23,20 @@
         app:layout_constraintTop_toBottomOf="@id/guideline3">
 
         <LinearLayout
+            android:id="@+id/homeParent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="33"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusable="true"
+            android:clickable="true"
+            android:onClick="switchFragments">
             <ImageView
                 android:id="@+id/defaultFrag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_offline_bolt_24"
-                android:onClick="switchFragments"/>
+                android:src="@drawable/ic_baseline_offline_bolt_24"/>
             <TextView
                 android:id="@+id/titleHome"
                 android:layout_width="wrap_content"
@@ -45,17 +48,20 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/historyParent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="33"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusable="true"
+            android:clickable="true"
+            android:onClick="switchFragments">
             <ImageView
                 android:id="@+id/graphFrag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_timeline_24"
-                android:onClick="switchFragments"/>
+                android:src="@drawable/ic_baseline_timeline_24"/>
 
             <TextView
                 android:id="@+id/titleHistory"
@@ -68,17 +74,20 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/settingsParent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="33"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusable="true"
+            android:clickable="true"
+            android:onClick="switchFragments">
             <ImageView
                 android:id="@+id/settingsFrag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_settings_24"
-                android:onClick="switchFragments"/>
+                android:src="@drawable/ic_baseline_settings_24"/>
             <TextView
                 android:id="@+id/titleSettings"
                 android:layout_width="wrap_content"

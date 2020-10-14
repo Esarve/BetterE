@@ -123,15 +123,15 @@ class MainActivity : AppCompatActivity(){
 
     fun switchFragments(view: View) {
         when (view.id){
-            R.id.defaultFrag -> {
+            R.id.homeParent -> {
                 viewPager.currentItem = 0
                 enableNavIcon(defaultFrag, titleHome)
             }
-            R.id.graphFrag -> {
+            R.id.historyParent -> {
                 viewPager.currentItem = 1
                 enableNavIcon(graphFrag, titleHistory)
             }
-            R.id.settingsFrag -> {
+            R.id.settingsParent -> {
                 viewPager.currentItem = 2
                 enableNavIcon(settingsFrag, titleSettings)
             }
