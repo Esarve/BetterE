@@ -168,10 +168,14 @@ class MainActivity : AppCompatActivity(){
             return fragmentlist[position]
         }
 
-        fun addFragment(fragment: Fragment){
+        fun addFragment(fragment: Fragment) {
             fragmentlist.add(fragment)
         }
 
+
+    }
+
+    fun openSomething() {
 
     }
 }

@@ -92,9 +92,9 @@ class FragmentDefault : Fragment(), ChargingEventListener {
 
             Log.d(Constants.DEFAULT, "Current: $current")
             Log.d(Constants.DEFAULT, "Current Thread ${Thread.currentThread().name}")
-
-            viewOnMain(current)
             delay(delayTime)
+            viewOnMain(current)
+
         }
     }
 
