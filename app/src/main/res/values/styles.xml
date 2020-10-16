@@ -20,27 +20,12 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/layoutBG</item>
+        <item name="backgroundColor">@color/layoutMainBG</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/textPrimaryLight</item>
         <item name="android:textColorSecondary">@color/textSecondaryLight</item>
-        <item name="">@style/MyDialogStyle</item>
+
     </style>
 
-    <style name="PreferenceStyle" parent="Preference.DialogPreference">
-        <item name="android:dialogPreferenceStyle">@style/MyDialogStyle</item>
-    </style>
-
-    <style name="AllertaStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">@font/allerta</item>
-    </style>
-
-
-    <style name="MyDialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">@color/layoutBG</item>
-        <item name="android:textColorSecondary">@color/layoutBG</item>
-    </style>
 
 </resources>

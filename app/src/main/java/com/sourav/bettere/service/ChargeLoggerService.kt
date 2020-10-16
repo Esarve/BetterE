@@ -206,12 +206,16 @@ class ChargeLoggerService() : Service(), OnChargingListener {
             )
             showNotification(1)
 
-            if (!isRecorded){
+            if (!isRecorded) {
                 startedP = percentage
                 isRecorded = true
             }
             endedP = percentage
             logCharge(voltage, percentage, temp)
+            if (endedP == 100) {
+                isCharging = false
+                finishLog()
+            }
         }
     }
 
@@ -253,6 +257,8 @@ class ChargeLoggerService() : Service(), OnChargingListener {
 
     override fun onDestroy() {
         this.unregisterReceiver(receiver)
+        isCharging = false
+        finishLog()
         super.onDestroy()
     }
 
