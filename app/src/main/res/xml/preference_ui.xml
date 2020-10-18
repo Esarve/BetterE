@@ -41,4 +41,20 @@
             android:summary="The service will wait for a certain amount of time. If the charger is plugged after that time, the service will count it as another charge cycle"
             android:title="Cooldown Time" />
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+        <Preference
+            android:selectable="false"
+            android:enabled="true"
+            android:key="pref_version"
+            android:title="Version"
+            android:summary="1.00" />
+    </PreferenceCategory>
+
+    <Preference
+        android:selectable="false"
+        android:enabled="true"
+        android:key="pref_export"
+        android:title="Export Data"
+        android:summary="Export Data to Internal Storage" />
 </PreferenceScreen>
