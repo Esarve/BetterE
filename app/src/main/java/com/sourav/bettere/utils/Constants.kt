@@ -26,6 +26,9 @@ class Constants {
         const val TITLE = "Monitoring Service is Running"
         const val BODY = "BetterE will log charging events as soon as plugged in"
 
+        //FOR INTENT BUNDLE
+        const val EXTRA_CD = "extracd"
+
         //FOR PREF TYPE
         const val PREF_NAME = "betterE_pref"
         const val PREF_TYPE_BOOL = "bool"
@@ -34,6 +37,9 @@ class Constants {
 
         //FOR PREF KEY
         const val PREF_KEY_SERVICE = "prefservice"
+        const val PREF_SAMPLING_KEY = "prefkey_samplerate"
+        const val PREF_BOOT_KEY = "prefkey_startonboot"
+        const val PREF_CDTIME_KEY = "prefkey_cdtime"
 
         //For PREF DIALOG TITLES
         const val PREF_DIALOG_TITLE_CDTIME = "(in Seconds)"

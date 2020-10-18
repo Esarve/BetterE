@@ -7,14 +7,12 @@ package com.sourav.bettere.fragments
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,6 +33,7 @@ import com.sourav.bettere.service.ChargeLoggerService
 import com.sourav.bettere.utils.Constants
 import com.sourav.bettere.utils.Utilities
 import com.sourav.bettere.viewModel.ChargingDataViewModel
+import com.sourav.bettere.viewModel.PreferenceViewModel
 import kotlinx.android.synthetic.main.graph_fragment.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -43,6 +42,7 @@ import kotlinx.coroutines.withContext
 
 
 class FragmentGraph : Fragment() {
+    private val TAG = Constants.GRAPH
     private lateinit var utilities: Utilities
     private lateinit var mContext: Context
     private lateinit var viewModelHistory: ChargingDataViewModel
@@ -51,7 +51,10 @@ class FragmentGraph : Fragment() {
     private lateinit var mView: View
     private lateinit var backButton: TextView
     private lateinit var intent: Intent
-    private lateinit var service: ChargeLoggerService
+    private lateinit var bundle: Bundle
+    private var cdTime: Long = 300000
+    private var onBoot = false
+
 
     companion object {
         fun newInstance(): FragmentGraph {
@@ -73,6 +76,7 @@ class FragmentGraph : Fragment() {
         mView = inflater.inflate(R.layout.graph_fragment, container, false)
         backButton = mView.findViewById(R.id.backToRecyclerView) as TextView
         intent = Intent(mContext, ChargeLoggerService::class.java)
+        bundle = Bundle()
 
         val rview: RecyclerView = mView.findViewById(R.id.rvHistory)
         val linearLayoutManager = LinearLayoutManager(this.context)
@@ -90,6 +94,22 @@ class FragmentGraph : Fragment() {
             historyList.addAll(history)
             Log.d(Constants.GRAPH, "onCreateView: $history")
             adapter.notifyDataSetChanged()
+        })
+
+        val prefViewmodel = ViewModelProvider(this).get(PreferenceViewModel::class.java)
+        prefViewmodel.getCDTime.observe(viewLifecycleOwner, Observer { value ->
+            cdTime = value.toLong()
+            bundle.putLong(Constants.EXTRA_CD, cdTime)
+            Log.d(TAG, "onCreateView: PREF CD TIME (OBSERVER): $cdTime")
+            if (isMyServiceRunning(ChargeLoggerService::class.java)) {
+                stopService()
+                startService()
+            }
+
+        })
+
+        prefViewmodel.getBootStatus.observe(viewLifecycleOwner, Observer { value ->
+            onBoot = value
         })
 
         adapter.setOnItemClickListener { adapter, view, position ->
@@ -116,6 +136,7 @@ class FragmentGraph : Fragment() {
     }
 
     private fun startService() {
+        intent.putExtras(bundle)
         requireActivity().startService(intent)
         Log.d(Constants.GRAPH, "startService: Service Started")
     }
@@ -137,7 +158,6 @@ class FragmentGraph : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private suspend fun plotGraph(data: List<ChargingLog>) {
         withContext(Dispatchers.Main) {
             val dataset = LineDataSet(
