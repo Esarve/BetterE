@@ -16,7 +16,7 @@
 
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/layoutBG</item>
@@ -24,8 +24,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/textPrimaryLight</item>
         <item name="android:textColorSecondary">@color/textSecondaryLight</item>
-
+        <item name="colorBackgroundFloating">@color/layoutBG</item>
+        <item name="android:editTextColor">@color/textPrimaryLight</item>
     </style>
-
 
 </resources>

@@ -20,7 +20,7 @@
     <PreferenceCategory android:title="Basic Settings">
 
         <EditTextPreference
-            android:defaultValue="true"
+            android:defaultValue="3000"
             android:key="prefkey_samplerate"
             android:selectAllOnFocus="true"
             android:singleLine="true"
@@ -34,7 +34,7 @@
             android:key="prefkey_startonboot"
             android:title="Start on Boot" />
         <EditTextPreference
-            android:defaultValue="true"
+            android:defaultValue="5"
             android:key="prefkey_cdtime"
             android:selectAllOnFocus="true"
             android:singleLine="true"

@@ -47,6 +47,11 @@ class Constants {
         //FOR PREF KEY
         const val PREF_KEY_SERVICE = "prefservice"
 
+        //For PREF DIALOG TITLES
+        const val PREF_DIALOG_TITLE_CDTIME = "(in Seconds)"
+
+        const val PREF_DIALOG_TITLE_SAMPLINGRATE = "(in Milliseconds)"
+
         //TimeData
         const val TIME_DATE_FORMAT = "MMMM dd,  hh:mm a"
 
