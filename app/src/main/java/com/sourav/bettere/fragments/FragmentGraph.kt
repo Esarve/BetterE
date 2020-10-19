@@ -4,7 +4,6 @@
 
 package com.sourav.bettere.fragments
 
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -101,7 +100,9 @@ class FragmentGraph : Fragment() {
             cdTime = value.toLong()
             bundle.putLong(Constants.EXTRA_CD, cdTime)
             Log.d(TAG, "onCreateView: PREF CD TIME (OBSERVER): $cdTime")
-            if (isMyServiceRunning(ChargeLoggerService::class.java)) {
+            if (Utilities.getInstance(mContext)
+                    .isMyServiceRunning(ChargeLoggerService::class.java)
+            ) {
                 stopService()
                 startService()
             }
@@ -132,6 +133,7 @@ class FragmentGraph : Fragment() {
                 rvParent.visibility = View.VISIBLE
             }
         }
+
         return mView
     }
 
@@ -148,13 +150,30 @@ class FragmentGraph : Fragment() {
 
     private fun initToggle() {
         switch = mView.findViewById(R.id.loggerTrigger)
-        if (isMyServiceRunning(ChargeLoggerService::class.java)) {
+        if (Utilities.getInstance(requireContext())
+                .isMyServiceRunning(ChargeLoggerService::class.java)
+        ) {
             switch.isChecked = true
         }
 
         switch.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) startService()
-            else stopService()
+            if (isChecked) {
+                startService()
+                Utilities.getInstance(mContext)
+                    .writeToPref(
+                        Constants.PREF_TYPE_BOOL,
+                        Constants.PREF_LOGGER_ACTIVE,
+                        valueBool = true
+                    )
+            } else {
+                stopService()
+                Utilities.getInstance(mContext)
+                    .writeToPref(
+                        Constants.PREF_TYPE_BOOL,
+                        Constants.PREF_LOGGER_ACTIVE,
+                        valueBool = false
+                    )
+            }
         }
     }
 
@@ -189,17 +208,6 @@ class FragmentGraph : Fragment() {
 
             linechart.invalidate()
         }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = mContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-        for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
     }
 
     override fun onResume() {

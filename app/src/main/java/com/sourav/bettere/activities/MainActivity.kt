@@ -4,8 +4,11 @@
 
 package com.sourav.bettere.activities
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,21 +18,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.sourav.bettere.R
-import com.sourav.bettere.db.entity.ChargingLog
 import com.sourav.bettere.fragments.FragmentDefault
 import com.sourav.bettere.fragments.FragmentGraph
 import com.sourav.bettere.fragments.FragmentSettings
-import com.sourav.bettere.utils.Constants
-import com.sourav.bettere.utils.RoomHelper
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity(){
     private lateinit var frag: Fragment
-    private lateinit var roomHelper: RoomHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity(){
         adapter.addFragment(FragmentGraph.newInstance())
         adapter.addFragment(FragmentSettings.newInstance())
         viewPager.adapter = adapter
-        roomHelper = RoomHelper.getInstance(this)
+        viewPager.offscreenPageLimit = 2
 
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -61,46 +59,19 @@ class MainActivity : AppCompatActivity(){
             }
 
         })
-        graphFrag.setOnLongClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
-                printDatabase()
-            }
-            true
-        }
         initView()
-    }
-
-    private fun printDatabase() {
-        printLog("PRINTING")
-        var list: List<ChargingLog>? = null
-        GlobalScope.launch(Dispatchers.IO) {
-            list = roomHelper.getChargingLog()
-
-            if (list!!.isNotEmpty()) {
-                for (log: ChargingLog in list!!) {
-                    val msg: String = "LOG: "
-                        .plus(log.timestamp)
-                        .plus(" ")
-                        .plus(log.cycle)
-                        .plus(" ")
-                        .plus(log.percentage)
-                        .plus(" ")
-                        .plus(log.current)
-                        .plus(" ")
-                        .plus(log.voltage)
-                        .plus(" ")
-                        .plus(log.temp)
-
-                    printLog(msg)
-                }
-            }
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+        val myIntent = Intent()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            myIntent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            myIntent.data = Uri.parse(
+                "package:" +
+                        packageName
+            )
         }
-    }
+        startActivity(myIntent)
 
-    private fun printLog(msg: String){
-        Log.d(Constants.DATABASE, msg)
     }
-
 
     private fun initView() {
         frag = FragmentDefault.newInstance()
@@ -160,10 +131,6 @@ class MainActivity : AppCompatActivity(){
             fragmentlist.add(fragment)
         }
 
-
-    }
-
-    fun openSomething() {
 
     }
 }

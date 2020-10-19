@@ -4,9 +4,13 @@
 
 package com.sourav.bettere.utils
 
+import android.app.ActivityManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.github.mikephil.charting.data.Entry
 import com.sourav.bettere.db.entity.ChargingLog
 import com.sourav.bettere.model.PercentageAmpModel
@@ -26,18 +30,22 @@ class Utilities private constructor(context: Context) {
             if (instance == null) {
                 instance = Utilities(context)
             }
+            mContext = context
             return instance as Utilities
         }
     }
 
-    suspend fun writeToPref(
+    fun writeToPref(
         type: String,
         key: String,
         valueStr: String = "",
         valueInt: Int = -1,
         valueBool: Boolean = false
     ) {
-        with(sharedPreferences.edit()) {
+        with(
+            PreferenceManager.getDefaultSharedPreferences(mContext)
+                .edit()
+        ) {
             when (type) {
                 Constants.PREF_TYPE_INT -> {
                     putInt(key, valueInt)
@@ -116,5 +124,21 @@ class Utilities private constructor(context: Context) {
         }
 
         return entry
+    }
+
+    fun <T> loadBroadcastReceiver(inst: T, intentFilter: IntentFilter) {
+        Log.d(Constants.DEFAULT, "Current Thread ${Thread.currentThread().name}")
+        mContext?.registerReceiver(inst as BroadcastReceiver, intentFilter)
+    }
+
+    @Suppress("DEPRECATION")
+    fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = mContext!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 }

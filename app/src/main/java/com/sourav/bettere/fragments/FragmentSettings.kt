@@ -4,14 +4,25 @@
 
 package com.sourav.bettere.fragments
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.sourav.bettere.R
+import com.sourav.bettere.broadcasts.StartOnBootBroadcast
 import com.sourav.bettere.utils.Constants
+import com.sourav.bettere.utils.Utilities
+import com.sourav.bettere.viewModel.PreferenceViewModel
 
 
 class FragmentSettings : PreferenceFragmentCompat() {
@@ -40,7 +51,27 @@ class FragmentSettings : PreferenceFragmentCompat() {
         }
 
         dummyPrefVersion!!.summary = getVersion()
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        val prefViewmodel = ViewModelProvider(this).get(PreferenceViewModel::class.java)
+        prefViewmodel.getBootStatus.observe(viewLifecycleOwner, Observer { onBoot ->
+            if (onBoot) {
+                Utilities.getInstance(requireContext()).loadBroadcastReceiver(
+                    StartOnBootBroadcast(),
+                    IntentFilter(Intent.ACTION_BOOT_COMPLETED)
+                )
+                Toast.makeText(requireContext(), "Service Will Start on Boot", Toast.LENGTH_LONG)
+                    .show()
+            }
+        })
+
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     private fun getVersion(): String {

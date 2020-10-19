@@ -40,8 +40,8 @@ class ChargeLoggerService() : Service(), OnChargingListener {
     private lateinit var mBatteryManager: BatteryManager
     private lateinit var roomHelper: RoomHelper
 
-    private var logRepository: LogRepository
-    private var historyRepository: HistoryRepository
+    private lateinit var logRepository: LogRepository
+    private lateinit var historyRepository: HistoryRepository
 
     private var lastCurrent: Long = -1L
     private var lastLevel: Int = -1
@@ -62,15 +62,16 @@ class ChargeLoggerService() : Service(), OnChargingListener {
         initNotificationManager()
         initNotification()
         loadBroadcastReceiver()
+        startForeground(1, buildNotification())
+        initDB()
     }
 
-    init {
+    private fun initDB() {
         val logDao = ChargingDB.getInstance(this).logDao()
         val historyDao = ChargingDB.getInstance(this).historyDao()
 
         logRepository = LogRepository(logDao)
         historyRepository = HistoryRepository(historyDao)
-
     }
 
     private fun initNotification() {

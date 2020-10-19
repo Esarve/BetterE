@@ -40,6 +40,7 @@ class Constants {
         const val PREF_SAMPLING_KEY = "prefkey_samplerate"
         const val PREF_BOOT_KEY = "prefkey_startonboot"
         const val PREF_CDTIME_KEY = "prefkey_cdtime"
+        const val PREF_LOGGER_ACTIVE = "prefkey_logger"
 
         //For PREF DIALOG TITLES
         const val PREF_DIALOG_TITLE_CDTIME = "(in Seconds)"
