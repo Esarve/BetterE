@@ -50,6 +50,7 @@ class ChargeLoggerService() : Service(), OnChargingListener {
     private var startTime: Long = 0
     private var startedP = -1
     private var endedP = -1
+    private var cdTime = 0L
 
     private var isCharging: Boolean = false
     private var isFinished: Boolean = true
@@ -62,6 +63,7 @@ class ChargeLoggerService() : Service(), OnChargingListener {
         initNotificationManager()
         initNotification()
         loadBroadcastReceiver()
+        buildNotification()
         startForeground(1, buildNotification())
         initDB()
     }
@@ -107,8 +109,7 @@ class ChargeLoggerService() : Service(), OnChargingListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        buildNotification()
-        startForeground(1, buildNotification())
+        cdTime = intent!!.getLongExtra("cdTime", 60000)
         return START_STICKY
     }
 
@@ -146,7 +147,7 @@ class ChargeLoggerService() : Service(), OnChargingListener {
         showNotification(1)
 
         if (isCharging) {
-            object : CountDownTimer(60000, 10000) {
+            object : CountDownTimer(cdTime, 10000) {
                 override fun onTick(p0: Long) {
                     isFinished = false
                 }

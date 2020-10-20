@@ -12,12 +12,28 @@ import android.widget.Toast
 import com.sourav.bettere.service.ChargeLoggerService
 
 class StartOnBootBroadcast : BroadcastReceiver() {
+
+    companion object {
+        private var instance: StartOnBootBroadcast? = null
+        fun getinstance(): StartOnBootBroadcast {
+            if (instance == null) {
+                instance = StartOnBootBroadcast()
+            }
+            return instance as StartOnBootBroadcast
+        }
+    }
+
     override fun onReceive(context: Context?, intent: Intent?) {
-        val intent = Intent(context, ChargeLoggerService::class.java)
+
+        val cdTime = intent?.getStringExtra("cdTime")
+
+        val serviceIntent = Intent(context, ChargeLoggerService::class.java)
+        serviceIntent.putExtra("cdTime", cdTime)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context!!.startForegroundService(intent)
+            context!!.startForegroundService(serviceIntent)
         } else {
-            context!!.startService(intent)
+            context!!.startService(serviceIntent)
         }
         Toast.makeText(context, "SERVICE STARTED", Toast.LENGTH_LONG).show()
     }

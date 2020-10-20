@@ -58,19 +58,32 @@ class FragmentSettings : PreferenceFragmentCompat() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        var cooldownTime = 60000L
         val prefViewmodel = ViewModelProvider(this).get(PreferenceViewModel::class.java)
         prefViewmodel.getBootStatus.observe(viewLifecycleOwner, Observer { onBoot ->
             if (onBoot) {
                 Utilities.getInstance(requireContext()).loadBroadcastReceiver(
-                    StartOnBootBroadcast(),
+                    StartOnBootBroadcast.getinstance(),
                     IntentFilter(Intent.ACTION_BOOT_COMPLETED)
                 )
                 Toast.makeText(requireContext(), "Service Will Start on Boot", Toast.LENGTH_LONG)
                     .show()
+            } else {
+                try {
+                    requireContext().unregisterReceiver(StartOnBootBroadcast.getinstance())
+                } catch (e: Exception) {
+                    //NO NEED TO DO SOMETHING DUH
+                }
+
             }
         })
 
+        prefViewmodel.getCDTime.observe(viewLifecycleOwner, Observer { cdTime ->
+            cooldownTime = cdTime.toLong()
+            val intent = Intent()
+            intent.putExtra("cdTime", cdTime)
+            requireActivity().sendBroadcast(intent)
+        })
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

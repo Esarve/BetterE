@@ -1,7 +1,7 @@
 /*
- * Copyright 2020 Sourav Das
- */
-
+* This class was found here: https://gist.github.com/rharter/1df1cd72ce4e9d1801bd2d49f2a96810
+* All credit goes to the author
+* */
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 
