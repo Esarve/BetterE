@@ -5,6 +5,7 @@
 package com.sourav.bettere.activities
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -28,6 +29,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(){
     private lateinit var frag: Fragment
+    private var orientation: Int = -1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -73,6 +75,14 @@ class MainActivity : AppCompatActivity(){
 
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        orientation = newConfig.orientation
+        when (orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> removeTitles()
+        }
+    }
+
     private fun initView() {
         frag = FragmentDefault.newInstance()
         enableNavIcon(defaultFrag, titleHome)
@@ -81,7 +91,7 @@ class MainActivity : AppCompatActivity(){
     }
 
     fun switchFragments(view: View) {
-        when (view.id){
+        when (view.id) {
             R.id.homeParent -> {
                 viewPager.currentItem = 0
                 enableNavIcon(defaultFrag, titleHome)
@@ -103,17 +113,18 @@ class MainActivity : AppCompatActivity(){
         graphFrag.colorFilter = null
         settingsFrag.colorFilter = null
         imageView.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent))
-        imageView.scaleX=1.3F
-        imageView.scaleY=1.3F
 
-        titleHome.visibility = View.GONE
-        titleHistory.visibility = View.GONE
-        titleSettings.visibility = View.GONE
-
+        removeTitles()
         textView.visibility = View.VISIBLE
     }
 
-    class ViewPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(
+    private fun removeTitles() {
+        titleHome.visibility = View.GONE
+        titleHistory.visibility = View.GONE
+        titleSettings.visibility = View.GONE
+    }
+
+    class ViewPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(
         manager,
         BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
     ) {

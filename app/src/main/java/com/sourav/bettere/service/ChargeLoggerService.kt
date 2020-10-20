@@ -134,11 +134,34 @@ class ChargeLoggerService() : Service(), OnChargingListener {
                 Log.d(TAG, "Current Value of Cycle is $cycle")
                 Log.d(TAG, "ON Charging: Previous Charging Finished. New cycle will begin.")
                 startTime = System.currentTimeMillis()
+                isFinished = false
                 cycle++
                 Log.d(TAG, "onCharging: Cycle Incremented")
             }
         }
         isCharging = true
+    }
+
+    override fun onReceive(voltage: Double, percentage: Int, temp: Double) {
+        Log.d(TAG, "onReceive: isCharging $isCharging")
+        if (isCharging) {
+            Log.d(TAG, "onReceive: Inside Charging Block")
+            builder.setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("Charging: voltage: $voltage, Temp: $temp, Percentage: $percentage")
+            )
+            showNotification(1)
+
+            if (!isRecorded) {
+                startedP = percentage
+                isRecorded = true
+            }
+            endedP = percentage
+            logCharge(voltage, percentage, temp)
+            if (endedP == 100) {
+                finishLog()
+            }
+        }
     }
 
     override fun onDischarging() {
@@ -162,9 +185,9 @@ class ChargeLoggerService() : Service(), OnChargingListener {
     }
 
     private fun finishLog() {
-        if (!isCharging){
+        if (isCharging && !isFinished) {
+            isCharging = false
             isFinished = true
-            isRecorded = false
             logHistory()
 
         }
@@ -182,31 +205,9 @@ class ChargeLoggerService() : Service(), OnChargingListener {
             )
             historyRepository.addHistory(chargingHistory)
             Log.d(TAG, "finishLog: ")
+            isRecorded = false
         }
 
-    }
-
-    override fun onReceive(voltage: Double, percentage: Int, temp: Double) {
-        Log.d(TAG, "onReceive: isCharging $isCharging")
-        if (isCharging) {
-            Log.d(TAG, "onReceive: Inside Charging Block")
-            builder.setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText("Charging: voltage: $voltage, Temp: $temp, Percentage: $percentage")
-            )
-            showNotification(1)
-
-            if (!isRecorded) {
-                startedP = percentage
-                isRecorded = true
-            }
-            endedP = percentage
-            logCharge(voltage, percentage, temp)
-            if (endedP == 100) {
-                isCharging = false
-                finishLog()
-            }
-        }
     }
 
     private fun logCharge(voltage: Double, percentage: Int, temp: Double) {
