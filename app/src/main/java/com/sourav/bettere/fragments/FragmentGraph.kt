@@ -4,8 +4,10 @@
 
 package com.sourav.bettere.fragments
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +26,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.sourav.bettere.R
 import com.sourav.bettere.adapters.HistoryAdapter
+import com.sourav.bettere.broadcasts.StartOnBootBroadcast
 import com.sourav.bettere.db.ChargingDB
 import com.sourav.bettere.db.entity.ChargingHistory
 import com.sourav.bettere.db.entity.ChargingLog
@@ -38,6 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 
 class FragmentGraph : Fragment() {
@@ -52,7 +56,6 @@ class FragmentGraph : Fragment() {
     private lateinit var intent: Intent
     private lateinit var bundle: Bundle
     private var cdTime: Long = 300000
-    private var onBoot = false
 
 
     companion object {
@@ -107,10 +110,6 @@ class FragmentGraph : Fragment() {
                 startService()
             }
 
-        })
-
-        prefViewmodel.getBootStatus.observe(viewLifecycleOwner, Observer { value ->
-            onBoot = value
         })
 
         adapter.setOnItemClickListener { adapter, view, position ->

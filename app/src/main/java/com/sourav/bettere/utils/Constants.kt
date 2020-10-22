@@ -14,7 +14,9 @@ class Constants {
         const val DISCHARGING = "Discharging"
 
         //Tags For Logs
-        const val BROADCAST = "BroadcastReceiver"
+        const val BAT_BROADCAST = "BBR"
+        const val CHAR_BROADCAST = "CBR"
+        const val SOB_BROADCAST = "SOBBR"
         const val SERVICE = "Service"
         const val DEFAULT = "DefaultFragment"
         const val GRAPH = "GraphFragment"

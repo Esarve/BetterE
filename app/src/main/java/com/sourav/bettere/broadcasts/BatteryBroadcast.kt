@@ -20,14 +20,14 @@ class BatteryBroadcast: BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d(Constants.BROADCAST, "Broadcast RUN")
+        Log.d(Constants.BAT_BROADCAST, "Broadcast RUN")
 
         val isPresent = intent?.getBooleanExtra("present", false)
 
         val bundle = intent?.extras
 
         val string = bundle.toString()
-        Log.d(Constants.BROADCAST, "Battery Info: $string")
+        Log.d(Constants.BAT_BROADCAST, "Battery Info: $string")
 
         if (isPresent!!) {
             val volt: Double? = bundle?.getInt("voltage")?.div(1000.0);
@@ -38,7 +38,7 @@ class BatteryBroadcast: BroadcastReceiver() {
                 listener!!.onVoltageChange(volt.toString())
                 listener!!.onBatteryPercentageChange(level.toString().plus("%"))
                 listener!!.onTempChange(temp.toString().plus("\u2103"))
-                Log.d(Constants.BROADCAST, "voltage: $volt")
+                Log.d(Constants.BAT_BROADCAST, "voltage: $volt")
                 listener!!.onChargingStatusChange((getChargingStatus(plugged!!)))
             } catch (e: Exception) {
                 e.printStackTrace()

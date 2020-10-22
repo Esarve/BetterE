@@ -14,7 +14,7 @@ import com.sourav.bettere.listeners.OnChargingListener
 import com.sourav.bettere.utils.Constants
 
 class ChargingBroadcast : BroadcastReceiver() {
-    private val TAG = Constants.SERVICE
+    private val TAG = Constants.CHAR_BROADCAST
     private var stillCharging: Boolean = false
     private var stilldischarging: Boolean = false
 
@@ -33,11 +33,11 @@ class ChargingBroadcast : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d(Constants.SERVICE, "Broadcast RUN")
+        Log.d(TAG, "Broadcast RUN")
         val isPresent = intent?.getBooleanExtra("present", false)
         val bundle = intent?.extras
         val string = bundle.toString()
-        Log.d(Constants.SERVICE, "Battery Info: $string")
+        Log.d(TAG, "Battery Info: $string")
 
         if (isPresent!!) {
             Log.d(TAG, "onReceive: isPresent $isPresent")
@@ -61,7 +61,7 @@ class ChargingBroadcast : BroadcastReceiver() {
         return when (plugged) {
             BatteryManager.BATTERY_PLUGGED_AC -> {
                 if (!stillCharging) {
-                    Log.d(Constants.SERVICE, "CHARGING")
+                    Log.d(Constants.CHAR_BROADCAST, "CHARGING")
                     Toast.makeText(mContext, "CHARGING", Toast.LENGTH_LONG).show()
                     listenerOnCharging!!.onCharging()
                 }
@@ -72,7 +72,7 @@ class ChargingBroadcast : BroadcastReceiver() {
             }
             else -> {
                 if (!stilldischarging) {
-                    Log.d(Constants.SERVICE, "DISCHARGING")
+                    Log.d(Constants.CHAR_BROADCAST, "DISCHARGING")
                     Toast.makeText(mContext, "DISCHARGING", Toast.LENGTH_LONG).show()
                     listenerOnCharging!!.onDischarging()
                 }
