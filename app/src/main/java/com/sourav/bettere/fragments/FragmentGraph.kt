@@ -18,6 +18,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
@@ -108,6 +109,9 @@ class FragmentGraph : Fragment() {
             ) {
                 stopService()
                 startService()
+                val intent = Intent("BDATA")
+                intent.putExtra("test", "DATA")
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
             }
 
         })

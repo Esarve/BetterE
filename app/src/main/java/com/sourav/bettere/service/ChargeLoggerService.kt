@@ -15,8 +15,11 @@ import android.os.Build
 import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.sourav.bettere.App.Companion.CHANNEL_ID
 import com.sourav.bettere.R
 import com.sourav.bettere.broadcasts.ChargingBroadcast
@@ -28,6 +31,7 @@ import com.sourav.bettere.repository.HistoryRepository
 import com.sourav.bettere.repository.LogRepository
 import com.sourav.bettere.utils.Constants
 import com.sourav.bettere.utils.RoomHelper
+import com.sourav.bettere.viewModel.PreferenceViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -109,7 +113,16 @@ class ChargeLoggerService() : Service(), OnChargingListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        cdTime = intent!!.getLongExtra("cdTime", 60000)
+        cdTime = intent!!.getLongExtra("cdTime", -1)
+        if (cdTime == -1L){
+            GlobalScope.launch(Dispatchers.IO) {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@ChargeLoggerService)
+                cdTime = sharedPreferences.getString(Constants.PREF_CDTIME_KEY, "6000")!!.toLong()
+            }
+            Toast.makeText(this, "LOADED FROM SHARED PREF", Toast.LENGTH_LONG).show()
+        }
+
+
         return START_STICKY
     }
 
