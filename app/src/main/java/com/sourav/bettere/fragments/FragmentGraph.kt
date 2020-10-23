@@ -16,7 +16,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
@@ -55,6 +54,7 @@ class FragmentGraph : Fragment(), OnChartValueSelectedListener {
     private lateinit var backButton: TextView
     private lateinit var intent: Intent
     private lateinit var bundle: Bundle
+    private lateinit var dataset: LineDataSet
     private var cdTime: Long = 300000
 
 
@@ -99,21 +99,23 @@ class FragmentGraph : Fragment(), OnChartValueSelectedListener {
         })
 
         val prefViewmodel = ViewModelProvider(this).get(PreferenceViewModel::class.java)
-        prefViewmodel.getCDTime.observe(viewLifecycleOwner, Observer { value ->
-            cdTime = value.toLong()
-            bundle.putLong(Constants.EXTRA_CD, cdTime)
-            Log.d(TAG, "onCreateView: PREF CD TIME (OBSERVER): $cdTime")
-            if (Utilities.getInstance(mContext)
-                    .isMyServiceRunning(ChargeLoggerService::class.java)
-            ) {
-                stopService()
-                startService()
-                val intent = Intent("BDATA")
-                intent.putExtra("test", "DATA")
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
-            }
 
+        prefViewmodel.getGraphPoint.observe(viewLifecycleOwner, Observer { value ->
+            if (this::dataset.isInitialized) {
+                dataset.setDrawCircles(value)
+                dataset.setDrawCircleHole(value)
+                linechart.invalidate()
+            }
         })
+
+        prefViewmodel.getInteractableGraph.observe(viewLifecycleOwner, Observer { value ->
+            if (this::dataset.isInitialized) {
+                linechart.setTouchEnabled(value)
+                linechart.invalidate()
+            }
+        })
+
+
 
         adapter.setOnItemClickListener { adapter, view, position ->
             rvParent.visibility = View.GONE
@@ -139,16 +141,6 @@ class FragmentGraph : Fragment(), OnChartValueSelectedListener {
         return mView
     }
 
-    private fun startService() {
-        intent.putExtras(bundle)
-        requireActivity().startService(intent)
-        Log.d(Constants.GRAPH, "startService: Service Started")
-    }
-
-    private fun stopService() {
-        requireActivity().stopService(intent)
-        Log.d(Constants.GRAPH, "stopService: Service Stopped")
-    }
 
     private fun initToggle() {
         switch = mView.findViewById(R.id.loggerTrigger)
@@ -160,28 +152,28 @@ class FragmentGraph : Fragment(), OnChartValueSelectedListener {
 
         switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                startService()
                 Utilities.getInstance(mContext)
                     .writeToPref(
                         Constants.PREF_TYPE_BOOL,
                         Constants.PREF_LOGGER_ACTIVE,
                         valueBool = true
                     )
+                Utilities.getInstance(mContext).startService(ChargeLoggerService::class.java)
             } else {
-                stopService()
                 Utilities.getInstance(mContext)
                     .writeToPref(
                         Constants.PREF_TYPE_BOOL,
                         Constants.PREF_LOGGER_ACTIVE,
                         valueBool = false
                     )
+                Utilities.getInstance(mContext).stopService(ChargeLoggerService::class.java)
             }
         }
     }
 
     private suspend fun plotGraph(data: List<ChargingLog>) {
         withContext(Dispatchers.Main) {
-            val dataset = LineDataSet(
+            dataset = LineDataSet(
                 Utilities.getInstance(mContext).generateAverage(data), "Ampere - Percentage Chart"
             )
 

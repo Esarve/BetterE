@@ -26,6 +26,20 @@
             android:title="Cooldown Time" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Graph Settings">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefkey_interactable_graph"
+            android:title="Interactable Graph"
+            android:summary="Enable this to zoom in, select a point, scroll the graph" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefkey_graphdot"
+            android:title="Show Graph Points"
+            android:summary="Enable this to show circles for every point in graph" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="About">
         <Preference
             android:selectable="false"

@@ -43,6 +43,8 @@ class Constants {
         const val PREF_BOOT_KEY = "prefkey_startonboot"
         const val PREF_CDTIME_KEY = "prefkey_cdtime"
         const val PREF_LOGGER_ACTIVE = "prefkey_logger"
+        const val PREF_INTERACTABLE_GRAPH = "prefkey_interactable_graph"
+        const val PREF_GRAPH_POINT = "prefkey_graphdot"
 
         //For PREF DIALOG TITLES
         const val PREF_DIALOG_TITLE_CDTIME = "(in Seconds)"

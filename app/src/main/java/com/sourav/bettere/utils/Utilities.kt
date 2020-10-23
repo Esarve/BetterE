@@ -5,10 +5,7 @@
 package com.sourav.bettere.utils
 
 import android.app.ActivityManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.IntentFilter
-import android.content.SharedPreferences
+import android.content.*
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.github.mikephil.charting.data.Entry
@@ -129,6 +126,17 @@ class Utilities private constructor(context: Context) {
     fun <T> loadBroadcastReceiver(inst: T, intentFilter: IntentFilter) {
         Log.d(Constants.DEFAULT, "Current Thread ${Thread.currentThread().name}")
         mContext?.registerReceiver(inst as BroadcastReceiver, intentFilter)
+    }
+
+    fun startService(clazz: Class<*>) {
+        val intent = Intent(mContext, clazz)
+        mContext!!.startService(intent)
+        Log.d(Constants.GRAPH, "startService: Service Started")
+    }
+
+    fun stopService(clazz: Class<*>) {
+        mContext!!.stopService(Intent(mContext, clazz))
+        Log.d(Constants.GRAPH, "stopService: Service Stopped")
     }
 
     @Suppress("DEPRECATION")
