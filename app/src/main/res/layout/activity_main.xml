@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#212121"
+    android:background="@color/layoutMainBG"
     tools:context=".activities.MainActivity">
 
     <androidx.viewpager.widget.ViewPager
@@ -22,33 +22,81 @@
         android:background="@drawable/layout_bg_bottombar"
         app:layout_constraintTop_toBottomOf="@id/guideline3">
 
-        <ImageView
-            android:id="@+id/defaultFrag"
+        <LinearLayout
+            android:id="@+id/homeParent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="33"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
-            android:src="@drawable/ic_baseline_offline_bolt_24"
-            android:onClick="switchFragments"/>
-        <ImageView
-            android:id="@+id/graphFrag"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:clickable="true"
+            android:onClick="switchFragments">
+            <ImageView
+                android:id="@+id/defaultFrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_offline_bolt_24"/>
+            <TextView
+                android:id="@+id/titleHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Home"
+                android:textSize="@dimen/_11ssp"
+                android:textColor="@color/colorAccent"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/historyParent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="33"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
-            android:src="@drawable/ic_baseline_timeline_24"
-            android:onClick="switchFragments"/>
-        <ImageView
-            android:id="@+id/settingsFrag"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:clickable="true"
+            android:onClick="switchFragments">
+            <ImageView
+                android:id="@+id/graphFrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_timeline_24"/>
+
+            <TextView
+                android:id="@+id/titleHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="History"
+                android:textSize="@dimen/_11ssp"
+                android:textColor="@color/colorAccent"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/settingsParent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="33"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
-            android:src="@drawable/ic_baseline_settings_24"
-            android:onClick="switchFragments"/>
+            android:gravity="center"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:clickable="true"
+            android:onClick="switchFragments">
+            <ImageView
+                android:id="@+id/settingsFrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_settings_24"/>
+            <TextView
+                android:id="@+id/titleSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Settings"
+                android:textSize="@dimen/_11ssp"
+                android:textColor="@color/colorAccent"/>
+        </LinearLayout>
 
     </LinearLayout>
 

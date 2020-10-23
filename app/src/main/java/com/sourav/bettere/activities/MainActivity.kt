@@ -1,25 +1,35 @@
+/*
+ * Copyright 2020 Sourav Das
+ */
+
 package com.sourav.bettere.activities
 
-import android.os.BatteryManager
+import android.content.Intent
+import android.content.res.Configuration
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.sourav.bettere.R
-import com.sourav.bettere.broadcasts.BatteryBroadcast
 import com.sourav.bettere.fragments.FragmentDefault
 import com.sourav.bettere.fragments.FragmentGraph
 import com.sourav.bettere.fragments.FragmentSettings
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Job
+
 
 class MainActivity : AppCompatActivity(){
     private lateinit var frag: Fragment
+    private var orientation: Int = -1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,8 +39,9 @@ class MainActivity : AppCompatActivity(){
         adapter.addFragment(FragmentGraph.newInstance())
         adapter.addFragment(FragmentSettings.newInstance())
         viewPager.adapter = adapter
+        viewPager.offscreenPageLimit = 2
 
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
                 positionOffset: Float,
@@ -39,10 +50,10 @@ class MainActivity : AppCompatActivity(){
             }
 
             override fun onPageSelected(position: Int) {
-                when(position){
-                    0 -> setBottomBarColor(defaultFrag)
-                    1 -> setBottomBarColor(graphFrag)
-                    2 -> setBottomBarColor(settingsFrag)
+                when (position) {
+                    0 -> enableNavIcon(defaultFrag, titleHome)
+                    1 -> enableNavIcon(graphFrag, titleHistory)
+                    2 -> enableNavIcon(settingsFrag, titleSettings)
                 }
             }
 
@@ -51,39 +62,72 @@ class MainActivity : AppCompatActivity(){
 
         })
         initView()
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+        val myIntent = Intent()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            myIntent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            myIntent.data = Uri.parse(
+                "package:" +
+                        packageName
+            )
+        }
+        startActivity(myIntent)
+
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        orientation = newConfig.orientation
+        when (orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> removeTitles()
+        }
     }
 
     private fun initView() {
         frag = FragmentDefault.newInstance()
-        setBottomBarColor(defaultFrag)
+        enableNavIcon(defaultFrag, titleHome)
+
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.layoutMainBG);
     }
 
     fun switchFragments(view: View) {
-        when (view.id){
-            R.id.defaultFrag -> {
+        when (view.id) {
+            R.id.homeParent -> {
                 viewPager.currentItem = 0
-                setBottomBarColor(defaultFrag)
+                enableNavIcon(defaultFrag, titleHome)
             }
-            R.id.graphFrag -> {
+            R.id.historyParent -> {
                 viewPager.currentItem = 1
-                setBottomBarColor(graphFrag)
+                enableNavIcon(graphFrag, titleHistory)
             }
-            R.id.settingsFrag -> {
+            R.id.settingsParent -> {
                 viewPager.currentItem = 2
-                setBottomBarColor(settingsFrag)
+                enableNavIcon(settingsFrag, titleSettings)
             }
             else -> FragmentDefault.newInstance()
         }
     }
 
-    private fun setBottomBarColor(imageView: ImageView) {
+    private fun enableNavIcon(imageView: ImageView, textView: TextView) {
         defaultFrag.colorFilter = null
         graphFrag.colorFilter = null
         settingsFrag.colorFilter = null
         imageView.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent))
+
+        removeTitles()
+        textView.visibility = View.VISIBLE
     }
 
-    class ViewPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private fun removeTitles() {
+        titleHome.visibility = View.GONE
+        titleHistory.visibility = View.GONE
+        titleSettings.visibility = View.GONE
+    }
+
+    class ViewPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(
+        manager,
+        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+    ) {
         private val fragmentlist: MutableList<Fragment> = ArrayList()
 
         override fun getCount(): Int {
@@ -94,7 +138,7 @@ class MainActivity : AppCompatActivity(){
             return fragmentlist[position]
         }
 
-        fun addFragment(fragment: Fragment){
+        fun addFragment(fragment: Fragment) {
             fragmentlist.add(fragment)
         }
 

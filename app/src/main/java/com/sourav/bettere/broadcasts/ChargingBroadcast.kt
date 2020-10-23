@@ -1,3 +1,7 @@
+/*
+ * Copyright 2020 Sourav Das
+ */
+
 package com.sourav.bettere.broadcasts
 
 import android.content.BroadcastReceiver
@@ -10,6 +14,7 @@ import com.sourav.bettere.listeners.OnChargingListener
 import com.sourav.bettere.utils.Constants
 
 class ChargingBroadcast : BroadcastReceiver() {
+    private val TAG = Constants.CHAR_BROADCAST
     private var stillCharging: Boolean = false
     private var stilldischarging: Boolean = false
 
@@ -28,18 +33,26 @@ class ChargingBroadcast : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d(Constants.SERVICE, "Broadcast RUN")
-
+        Log.d(TAG, "Broadcast RUN")
         val isPresent = intent?.getBooleanExtra("present", false)
-
         val bundle = intent?.extras
-
         val string = bundle.toString()
-        Log.d(Constants.SERVICE, "Battery Info: $string")
+        Log.d(TAG, "Battery Info: $string")
 
         if (isPresent!!) {
+            Log.d(TAG, "onReceive: isPresent $isPresent")
             val plugged = bundle?.getInt(BatteryManager.EXTRA_PLUGGED, 0)
-            getChargingStatus(plugged!!)
+            val volt: Double? = bundle?.getInt("voltage")?.div(1000.0)
+            val level: Int? = bundle?.getInt("level")
+            val temp: Double? = bundle?.getInt("temperature")?.div(10.0)
+
+            try {
+                getChargingStatus(plugged!!)
+                Log.d(TAG, "onReceive: Fired onReceive from Broadcast Listener")
+                listenerOnCharging!!.onReceive(volt!!, level!!, temp!!)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }
@@ -48,7 +61,7 @@ class ChargingBroadcast : BroadcastReceiver() {
         return when (plugged) {
             BatteryManager.BATTERY_PLUGGED_AC -> {
                 if (!stillCharging) {
-                    Log.d(Constants.SERVICE, "CHARGING")
+                    Log.d(Constants.CHAR_BROADCAST, "CHARGING")
                     Toast.makeText(mContext, "CHARGING", Toast.LENGTH_LONG).show()
                     listenerOnCharging!!.onCharging()
                 }
@@ -59,7 +72,7 @@ class ChargingBroadcast : BroadcastReceiver() {
             }
             else -> {
                 if (!stilldischarging) {
-                    Log.d(Constants.SERVICE, "DISCHARGING")
+                    Log.d(Constants.CHAR_BROADCAST, "DISCHARGING")
                     Toast.makeText(mContext, "DISCHARGING", Toast.LENGTH_LONG).show()
                     listenerOnCharging!!.onDischarging()
                 }

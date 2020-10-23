@@ -1,8 +1,11 @@
+/*
+ * Copyright 2020 Sourav Das
+ */
+
 package com.sourav.bettere
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
