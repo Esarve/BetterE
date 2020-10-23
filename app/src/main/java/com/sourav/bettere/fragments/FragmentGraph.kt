@@ -152,22 +152,16 @@ class FragmentGraph : Fragment(), OnChartValueSelectedListener {
 
         switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                Utilities.getInstance(mContext)
-                    .writeToPref(
-                        Constants.PREF_TYPE_BOOL,
-                        Constants.PREF_LOGGER_ACTIVE,
-                        valueBool = true
-                    )
                 Utilities.getInstance(mContext).startService(ChargeLoggerService::class.java)
             } else {
-                Utilities.getInstance(mContext)
-                    .writeToPref(
-                        Constants.PREF_TYPE_BOOL,
-                        Constants.PREF_LOGGER_ACTIVE,
-                        valueBool = false
-                    )
                 Utilities.getInstance(mContext).stopService(ChargeLoggerService::class.java)
             }
+            Utilities.getInstance(mContext)
+                .writeToPref(
+                    Constants.PREF_TYPE_BOOL,
+                    Constants.PREF_LOGGER_ACTIVE,
+                    valueBool = isChecked
+                )
         }
     }
 

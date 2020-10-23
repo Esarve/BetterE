@@ -80,6 +80,7 @@ class ChargeLoggerService() : LifecycleService(), OnChargingListener {
     private fun initNotification() {
         builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_offline_bolt_24)
+            .setVibrate(null)
             .setContentTitle(Constants.TITLE)
             .setContentText(Constants.BODY)
             .setStyle(NotificationCompat.BigTextStyle().bigText(Constants.BODY))
