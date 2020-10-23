@@ -47,7 +47,7 @@ class Constants {
         const val PREF_GRAPH_POINT = "prefkey_graphdot"
 
         //For PREF DIALOG TITLES
-        const val PREF_DIALOG_TITLE_CDTIME = "(in Seconds)"
+        const val PREF_DIALOG_TITLE_CDTIME = "(in Minutes)"
 
         const val PREF_DIALOG_TITLE_SAMPLINGRATE = "(in Milliseconds)"
 

@@ -110,9 +110,15 @@ class ChargeLoggerService() : LifecycleService(), OnChargingListener {
         super.onStartCommand(intent, flags, startId)
         val sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this@ChargeLoggerService)
-        sharedPreferences.stringLiveData(Constants.PREF_CDTIME_KEY, "6000")
+        sharedPreferences.stringLiveData(Constants.PREF_CDTIME_KEY, "1")
             .observe(this@ChargeLoggerService, { value ->
-                cdTime = value.toLong()
+                if (value != "0") {
+                    cdTime = value.toLong().times(60000)
+                    Log.d(TAG, "onStartCommand: CD time updated to $cdTime")
+                } else {
+                    cdTime == 0L
+                }
+
             })
         return START_STICKY
     }
@@ -174,22 +180,27 @@ class ChargeLoggerService() : LifecycleService(), OnChargingListener {
         showNotification(1)
 
         if (isCharging) {
-            object : CountDownTimer(cdTime, 10000) {
-                override fun onTick(p0: Long) {
-                    isFinished = false
-                }
+            isCharging = false
+            if (cdTime != 0L) {
+                object : CountDownTimer(cdTime, 10000) {
+                    override fun onTick(p0: Long) {
+                        isFinished = false
+                    }
 
-                override fun onFinish() {
-                    finishLog()
-                    Log.d(TAG, "onFinish: Secession Finished")
-                }
-            }.start()
+                    override fun onFinish() {
+                        finishLog()
+                        Log.d(TAG, "onFinish: Secession Finished")
+                    }
+                }.start()
+            } else {
+                finishLog()
+            }
         }
-        isCharging = false
     }
 
     private fun finishLog() {
-        if (isCharging && !isFinished) {
+        if (!isCharging && !isFinished) {
+            Log.d(TAG, "finishLog: Triggered")
             isCharging = false
             isFinished = true
             logHistory()
@@ -207,7 +218,7 @@ class ChargeLoggerService() : LifecycleService(), OnChargingListener {
                 endedP
             )
             historyRepository.addHistory(chargingHistory)
-            Log.d(TAG, "finishLog: ")
+            Log.d(TAG, "Logging Finished")
             isRecorded = false
         }
 
