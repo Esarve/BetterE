@@ -4,10 +4,8 @@
 
 package com.sourav.bettere.fragments
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,12 +20,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.sourav.bettere.R
 import com.sourav.bettere.adapters.HistoryAdapter
-import com.sourav.bettere.broadcasts.StartOnBootBroadcast
 import com.sourav.bettere.db.ChargingDB
 import com.sourav.bettere.db.entity.ChargingHistory
 import com.sourav.bettere.db.entity.ChargingLog
@@ -42,10 +42,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 
-class FragmentGraph : Fragment() {
+class FragmentGraph : Fragment(), OnChartValueSelectedListener {
     private val TAG = Constants.GRAPH
     private lateinit var utilities: Utilities
     private lateinit var mContext: Context
@@ -187,8 +186,11 @@ class FragmentGraph : Fragment() {
             )
 
             dataset.valueTextColor = resources.getColor(R.color.textPrimaryLight, mContext.theme)
+            dataset.setDrawCircles(false)
+            dataset.setDrawCircleHole(false)
             dataset.setDrawFilled(true)
             dataset.fillColor = resources.getColor(R.color.colorAccent, mContext.theme)
+            dataset.setDrawHighlightIndicators(true)
             val lineData = LineData(dataset)
             linechart.data = lineData
 
@@ -205,10 +207,10 @@ class FragmentGraph : Fragment() {
             linechart.legend.textColor =
                 resources.getColor(R.color.textPrimaryLight, mContext.theme)
 
-            linechart.setTouchEnabled(false)
             linechart.description.isEnabled = false
             linechart.setBorderColor(resources.getColor(R.color.textPrimaryLight, mContext.theme))
 
+            linechart.setOnChartValueSelectedListener(this@FragmentGraph)
             linechart.invalidate()
         }
     }
@@ -216,6 +218,16 @@ class FragmentGraph : Fragment() {
     override fun onResume() {
         super.onResume()
         initToggle()
+    }
+
+    override fun onValueSelected(e: Entry?, h: Highlight?) {
+        xval.text = "Percentage: ".plus(h?.x.toString())
+        yval.text = "Current: ".plus(h?.y.toString()).plus(" mAh")
+    }
+
+    override fun onNothingSelected() {
+        xval.text = ""
+        yval.text = ""
     }
 
 }
